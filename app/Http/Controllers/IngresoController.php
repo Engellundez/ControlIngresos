@@ -14,7 +14,8 @@ class IngresoController extends Controller
      */
     public function index()
     {
-        //
+        $ingresos = Ingreso::Where('user_id', auth()->user()->id)->paginate(10);
+		return view('ingresos.index',compact('ingresos'));
     }
 
     /**
@@ -35,7 +36,16 @@ class IngresoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+		$cantidad = number_format($request->cantidad, 2, '.', '');
+
+        $ingreso = new Ingreso;
+		$ingreso->cantidad = $cantidad;
+		$ingreso->proviene = $request->proviene;
+		$ingreso->fecha_ingresos = $request->fecha_ingreso;
+		$ingreso->user_id = auth()->user()->id;
+		$ingreso->save();
+
+		return redirect('ingresos')->with('mensaje', 'Ingreso registrado correctamente');
     }
 
     /**
@@ -67,9 +77,20 @@ class IngresoController extends Controller
      * @param  \App\Models\Ingreso  $ingreso
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Ingreso $ingreso)
+    public function update(Request $request)
     {
-        //
+		$cantidad = number_format($request->cantidad2, 2, '.', '');
+
+        $ingreso = Ingreso::findOrFail($request->id2);
+
+
+
+		$ingreso->cantidad = $cantidad;
+		$ingreso->proviene = $request->proviene2;
+		$ingreso->fecha_ingresos = $request->fecha_ingreso2;
+		$ingreso->save();
+
+		return redirect('ingresos')->with('mensaje', 'Ingreso editado correctamente');
     }
 
     /**
@@ -78,8 +99,12 @@ class IngresoController extends Controller
      * @param  \App\Models\Ingreso  $ingreso
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Ingreso $ingreso)
+    public function destroy(Request $request)
     {
-        //
+		if(Ingreso::destroy($request->id)){
+			return "success";
+		}else{
+			return "denied";
+		}
     }
 }
