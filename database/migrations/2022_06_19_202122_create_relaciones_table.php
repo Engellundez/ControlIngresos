@@ -28,6 +28,7 @@ return new class extends Migration
 
 		Schema::table('ingresos', function (Blueprint $table) {
 			$table->foreign('user_id')->references('id')->on('users');
+			$table->foreign('tipo_ingreso_id')->references('id')->on('catalogos');
 		});
 
 		Schema::table('gastos', function (Blueprint $table) {

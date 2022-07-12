@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('ingresos', function (Blueprint $table) {
             $table->id();
 			$table->foreignId('user_id');
-			$table->string('proviene');
+			$table->foreignId('tipo_ingreso_id');
 			$table->decimal('cantidad');
 			$table->date('fecha_ingresos');
             $table->timestamps();

@@ -20,6 +20,10 @@ class TipoSeeder extends Seeder
 			'descripcion' => 'Este es el tipo de todos los roles que habra en el sistema',
 		]);
         DB::table('tipos')->insert([
+			'name' => 'Ingresos',
+			'descripcion' => 'Este es el tipo de todos los roles que habra en el sistema',
+		]);
+        DB::table('tipos')->insert([
 			'name' => 'Gastos',
 			'descripcion' => 'Este es el tipo de todos los roles que habra en el sistema',
 		]);

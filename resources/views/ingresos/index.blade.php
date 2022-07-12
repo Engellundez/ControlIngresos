@@ -15,43 +15,7 @@
 		Agregar Ingreso
 	</button>
 </div>
-<table class="table table-striped table-responsive">
-	<thead class="table-dark">
-		<tr>
-			<th class="text-center">#</th>
-			<th class="text-center">Fecha del Ingreso</th>
-			<th class="text-center">Cantidad</th>
-			<th class="text-center">De donde proviene</th>
-			<th class="text-center">Acciones</th>
-		</tr>
-	</thead>
-	<tbody>
-		@php
-			$incremento = 1;
-		@endphp
-		@if ($ingresos->count() >=1)
-			@foreach ($ingresos as $ingreso)
-				<tr id="removerId{{$ingreso->id}}">
-					<td class="text-center" scope="row">{{$incremento}}</td>
-					<td class="text-center">{{$ingreso->fecha_ingresos}}</td>
-					<td class="text-center">{{$ingreso->cantidad}}</td>
-					<td class="text-center">{{$ingreso->proviene}}</td>
-					<td class="text-center">
-						<button class="btn btn-warning btn-block" id="button-update" data-bs-toggle="modal" data-bs-target="#modalActualizar" onclick="llenarDatos({{$ingreso->id}},'{{$ingreso->fecha_ingresos}}', {{$ingreso->cantidad}}, '{{$ingreso->proviene}}')"><i class="fa-solid fa-pen"></i>&nbsp; Editar</button> | <button class="btn btn-danger btn-block" id="button-destroy" onclick="eliminar('{{$ingreso->id}}')"><i class="fa-solid fa-trash"></i>&nbsp; Borrar</button>
-					</td>
-				</tr>
-				@php
-					$incremento++
-				@endphp
-			@endforeach
-		@else
-			<tr>
-				<td colspan="5" class="text-center">No hay Ingresos Registrados</td>
-			</tr>
-		@endif
-	</tbody>
-</table>
-{{$ingresos->links()}}
+<div id="container-tabla"></div>
 
 <!-- Modal -->
 <div class="modal fade" id="modalRegistrar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -127,6 +91,14 @@
 @endsection
 @section('scrips')
 	<script>
+		$(document).ready(function(){
+			Cargartabla(1);
+		});
+
+		function Cargartabla(page){
+			console.log(page);
+		}
+
 		function CerrarModal(){
 			document.getElementById('cantidad').value = "";
 			document.getElementById('proviene').value = "";
@@ -157,29 +129,29 @@
 						id: id,
 					}, function (data) {
 						if (data == 'success') {
-                        Swal.fire({
-                            title: 'Eliminado',
-                            text: "Se ha eliminado el registro.",
-                            icon: 'success',
-                            confirmButtonColor: '#3085d6',
-                            confirmButtonText: 'De acuerdo',
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                $('#removerId' + id).remove();
-                                // location.reload();
-                            } else {
-                                $('#removerId' + id).remove();
-                                // location.reload();
-                            }
-                        })
-                    } else if (data == 'denied') {
-                        Swal.fire({
-                            title: 'No se ha eliminado.',
-                            text: 'No fue posible eliminar el registro, el expediente ya cuenta con un responsable.',
-                            icon: 'error',
-                            confirmButtonText: 'De acuerdo'
-                        })
-                    }
+						Swal.fire({
+							title: 'Eliminado',
+							text: "Se ha eliminado el registro.",
+							icon: 'success',
+							confirmButtonColor: '#3085d6',
+							confirmButtonText: 'De acuerdo',
+						}).then((result) => {
+							if (result.isConfirmed) {
+								$('#removerId' + id).remove();
+								// location.reload();
+							} else {
+								$('#removerId' + id).remove();
+								// location.reload();
+							}
+						})
+					} else if (data == 'denied') {
+						Swal.fire({
+							title: 'No se ha eliminado.',
+							text: 'No fue posible eliminar el registro, el expediente ya cuenta con un responsable.',
+							icon: 'error',
+							confirmButtonText: 'De acuerdo'
+						})
+					}
 					});
 				}
 			});

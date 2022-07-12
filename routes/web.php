@@ -13,16 +13,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
-
 Auth::routes(['register'=>true,'reset'=>false]);
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/ingresos', 'IngresoController@index')->name('index');
-Route::post('/ingresos', 'IngresoController@store')->name('ingreso');
-Route::put('/actualizar', 'IngresoController@update')->name('actualizar');
-Route::post('/eliminar', 'IngresoController@destroy')->name('eliminar');
+Route::get('/', 'IngresoController@index')->middleware('auth')->name('index');
+Route::get('/ajax', 'IngresoController@ajax')->middleware('auth')->name('ajax');
+Route::post('/ingresos', 'IngresoController@store')->middleware('auth')->name('ingreso');
+Route::put('/actualizar', 'IngresoController@update')->middleware('auth')->name('actualizar');
+Route::post('/eliminar', 'IngresoController@destroy')->middleware('auth')->name('eliminar');
 // Route::resource('ingresos', IngresoController::class);
