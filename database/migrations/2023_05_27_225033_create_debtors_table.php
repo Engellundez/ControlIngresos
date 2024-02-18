@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('debtors', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('account_id');
             $table->string('name');
-            $table->string('surname');
-            $table->string('second_surname');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('surname')->nullable();
+            $table->string('second_surname')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->foreign('account_id')->references('id')->on('accounts');
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('debtors');
     }
 };

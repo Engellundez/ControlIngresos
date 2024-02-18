@@ -1,3 +1,84 @@
+@import "@fortawesome/fontawesome-free/css/fontawesome.css";
+@import "@fortawesome/fontawesome-free/css/regular.css";
+@import "@fortawesome/fontawesome-free/css/solid.css";
+@import "@fortawesome/fontawesome-free/css/brands.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.card {
+	@apply w-full p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-8 dark:bg-gray-800 dark:border-gray-700 mb-6;
+}
+
+.header-card {
+	@apply flex items-center justify-between mb-4;
+}
+
+.title-header-card {
+	@apply text-xl font-bold leading-none text-gray-900 dark:text-white;
+}
+
+.link-header-card {
+	@apply text-sm font-medium text-blue-600 hover:underline dark:text-blue-500;
+}
+
+.card-body {
+	@apply flow-root;
+}
+
+.list {
+	@apply divide-y divide-gray-200 dark:divide-gray-700;
+}
+
+.item-list {
+	@apply py-2 sm:py-4;
+}
+
+.row {
+	@apply flex items-center;
+}
+
+.column-image {
+	@apply flex-shrink-0;
+}
+
+.column-image img {
+	@apply w-5 h-8 rounded-full;
+}
+
+.column-image i {
+	@apply w-5 h-8;
+}
+
+.fa-solid {
+	font-size: 1.5rem;
+}
+
+.column-content {
+	@apply flex-1 min-w-0 ms-4;
+}
+
+.no-data-text {
+	@apply text-sm font-medium text-gray-600 dark:text-white;
+}
+
+.principal-text {
+	@apply text-sm font-medium text-gray-600 truncate dark:text-white;
+}
+
+.secondary-text {
+	@apply text-sm text-gray-500 truncate dark:text-gray-400;
+}
+
+.column-mount {
+	@apply inline-flex items-center text-base font-semibold;
+}
+
+.accordion-header {
+	@apply flex items-center justify-between w-full p-5 font-medium rtl:text-right text-gray-500 border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-800 dark:border-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 gap-3;
+}
+
+.accordion-body {
+	@apply p-5 border border-b-0 border-gray-200 dark:border-gray-700 dark:bg-gray-900;
+}
