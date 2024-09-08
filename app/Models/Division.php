@@ -8,20 +8,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Division extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
-    protected $fillable = [
+	protected $fillable = [
 		'alias',
-        'account_id',
-        'percent',
-        'actual_amount',
-        'expected_amount'
-    ];
+		'account_id',
+		'percent',
+		'actual_amount',
+		'expected_amount'
+	];
 
-    public function account(): BelongsTo
-    {
-        return $this->belongsTo(Account::class, 'id', 'account_id');
-    }
+	public function account(): BelongsTo
+	{
+		return $this->belongsTo(Account::class, 'id', 'account_id');
+	}
 
 	// ATTRIBUTES
 	public function getFormattedCreatedAtAttribute()

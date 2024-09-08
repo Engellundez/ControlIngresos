@@ -6,25 +6,28 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Activity extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
+	protected $connection = 'sqlsrv';
 	protected $fillable = [
-		'wallet_id',
+		'account_id',
 		'activitable_id',
 		'activitable_type',
+		'description',
 		'amount',
 		'activity_date',
-		'description'
+		'wallet_id',
 	];
 
-	protected $appends = ['formatted_activity_date', 'motion'];
+	protected $appends = ['formatted_activity_date', 'wallet_name', 'motion'];
 	// RELATIONS
 	public function wallet(): BelongsTo
 	{
-		return $this->belongsTo(Wallet::class, 'id', 'wallet_id');
+		return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
 	}
 
 	public function motionRelation(): BelongsTo
@@ -37,7 +40,11 @@ class Activity extends Model
 		return $this->motionRelation->name;
 	}
 
-	// ATTRIBUTES
+	public function getWalletNameAttribute()
+	{
+		return $this->wallet->name ?? 'S/D';
+	}
+
 	public function getFormattedActivityDateAttribute()
 	{
 		return Carbon::parse($this->activity_date)->format('d-m-Y');

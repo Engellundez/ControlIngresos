@@ -6,29 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('activities', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('wallet_id');
-            $table->morphs('activitable');
-            $table->float('amount',12,0)->default(0);
-            $table->date('activity_date');
-            $table->text('description')->nullable();
-            $table->timestamps();
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
+		Schema::create('activities', function (Blueprint $table) {
+			$table->id();
+			$table->foreignId('account_id');
+			$table->morphs('activitable');
+			$table->text('description')->nullable();
+			$table->float('amount', 12, 0)->default(0);
+			$table->date('activity_date');
+			$table->foreignId('wallet_id');
+			$table->timestamps();
+			$table->softDeletes();
 
-            $table->foreign('wallet_id')->references('id')->on('wallets');
-        });
-    }
+			$table->foreign('account_id')->references('id')->on('accounts');
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('activities');
-    }
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('activities');
+	}
 };

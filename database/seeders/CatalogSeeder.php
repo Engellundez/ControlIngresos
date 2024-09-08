@@ -16,11 +16,13 @@ class CatalogSeeder extends Seeder
 		// TIPOS CATÁLOGOS
 		DB::table('types')->insert([
 			'name' => 'Ingresos',
-			'description' => 'Dinero obtenido por alguna labor o servicio u otro.'
+			'description' => 'Dinero obtenido por alguna labor o servicio u otro.',
+			'user_can_use' => 1,
 		]);
 		DB::table('types')->insert([
 			'name' => 'Gastos',
-			'description' => 'Dinero que se usa para comprar cosas.'
+			'description' => 'Dinero que se usa para comprar cosas.',
+			'user_can_use' => 1,
 		]);
 		DB::table('types')->insert([
 			'name' => 'Sistema',
@@ -28,7 +30,8 @@ class CatalogSeeder extends Seeder
 		]);
 		DB::table('types')->insert([
 			'name' => 'Perdidas',
-			'description' => 'Dinero que ya no volviste a encontrar, o perdiste por distraído, o alguna mala inversion o préstamo.'
+			'description' => 'Dinero que ya no volviste a encontrar, o perdiste por distraído, o alguna mala inversion o préstamo.',
+			'user_can_use' => 1,
 		]);
 		DB::table('types')->insert([
 			'name' => 'Métodos de pago',
@@ -131,12 +134,23 @@ class CatalogSeeder extends Seeder
 			'name' => 'Droga(s)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::EXPENSES,
-			'name' => 'Mala suerte',
-		]);
-		DB::table('catalogs')->insert([
 			'type_id' => Type::SYSTEM,
 			'name' => 'Traspaso a cuentas',
+		]);
+
+
+		// Formas de perdida
+		DB::table('catalogs')->insert([
+			'type_id' => Type::LOSSES,
+			'name' => 'Lavadora',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::LOSSES,
+			'name' => 'No recuerdo',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::LOSSES,
+			'name' => 'Mala suerte',
 		]);
 
 

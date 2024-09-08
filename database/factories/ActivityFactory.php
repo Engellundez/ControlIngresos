@@ -24,11 +24,12 @@ class ActivityFactory extends Factory
     public function definition(): array
     {
         return [
-            'wallet_id' => Wallet::all()->random()->id,
-            'activitable_id' => Catalog::where('name', 'Bienvenida')->where('type_id', Type::SYSTEM)->first()->id,
+			'activitable_id' => Catalog::where('name', 'Bienvenida')->where('type_id', Type::SYSTEM)->first()->id,
             'activitable_type' => Type::SYSTEM,
+			'amount' => 0.0,
+            'description' => 'Bienvenido al Sistema de Control de Ingresos 😎',
             'activity_date' => now(),
-            'description' => 'Bienvenido al Sistema de Control de Ingresos 😎'
+            'wallet_id' => Wallet::all()->random()->id,
         ];
     }
 }

@@ -18,8 +18,6 @@ return new class extends Migration
 			$table->float('total_count', 12, 0)->default(0);
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

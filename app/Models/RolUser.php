@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RolUser extends Model
 {
-    use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'user_id',
-        'rol_id',
-    ];
+	protected $connection = 'users_connection';
+	protected $fillable = [
+		'user_id',
+		'rol_id',
+	];
 }

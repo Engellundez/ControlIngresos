@@ -2,20 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Wallet extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	protected $fillable = [
 		'account_id',
 		'name',
-		'is_active'
+		'is_card',
+		'amount',
+		'is_active',
 	];
 
 	// RELATIONS
@@ -26,13 +29,13 @@ class Wallet extends Model
 
 	public function activities(): HasMany
 	{
-		return $this->hasMany(Activity::class, 'wallet_id', 'id')->latest();
+		return $this->hasMany(Activity::class, 'wallet_id', 'id');
 	}
 
 	// SCOPES
-	public function scopeWallets(Builder $query, $id_account): void
+	public function scopeWallets(Builder $query, $id_account)
 	{
-		$query->where([['account_id', '=', $id_account], ['is_active', '=', true]])->latest();
+		$query->where([['account_id', '=', $id_account], ['is_active', '=', true]]);
 	}
 
 	// ATTRIBUTES

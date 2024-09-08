@@ -11,20 +11,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WalletFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+	/**
+	 * Define the model's default state.
+	 *
+	 * @return array<string, mixed>
+	 */
 
-    protected $model = Wallet::class;
+	protected $model = Wallet::class;
 
-    public function definition(): array
-    {
-        return [
-            'account_id' => Account::all()->random()->id,
-            'name' => 'Efectivo',
-            'is_active' => '1',
-        ];
-    }
+	public function definition(): array
+	{
+		return [
+			'account_id' => Account::all()->random()->id,
+			'name' => 'EFECTIVO',
+			'is_card' => '0',
+			'amount' => 0.0,
+			'is_active' => '1',
+		];
+	}
 }

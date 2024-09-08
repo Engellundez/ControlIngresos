@@ -4,18 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Debtor extends Model
 {
-    use HasFactory;
+	use HasFactory, SoftDeletes;
 
-    protected $fillable = [
-        'account_id',
-        'name',
-        'surname',
-        'second_surname',
-        'description'
-    ];
+	protected $fillable = [
+		'account_id',
+		'name',
+		'surname',
+		'second_surname',
+		'amount',
+		'description'
+	];
 
 	// ATTRIBUTES
 	public function getFormattedCreatedAtAttribute()

@@ -13,6 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+	protected $connection = 'users_connection';
     /**
      * The attributes that are mass assignable.
      *

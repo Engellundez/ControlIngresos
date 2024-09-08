@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\PrincipalController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\WalletController;
 
@@ -21,12 +22,16 @@ Route::get('/', function () {
 	return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-	return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->controller(PrincipalController::class)->group(function () {
+	Route::get('/dashboard', 'dashboard')->name('dashboard');
+	Route::post('/last-movements', 'last_movements')->name('movements');
+	Route::post('/last-movements-format-grafic', 'last_movements_format')->name('movements_format');
+	Route::post('/new-activity', 'store_activity')->name('store_activity');
+});
 
-Route::middleware('auth')->name('wallet.')->group(function () {
-	Route::get('/wallet', [WalletController::class, 'index'])->name('index');
+Route::middleware('auth')->name('wallet.')->controller(WalletController::class)->group(function () {
+	Route::get('/wallet', 'index')->name('index');
+	Route::get('/my-wallets', 'my_wallets')->name('my_wallets');
 });
 
 Route::middleware('auth')->name('profile.')->group(function () {

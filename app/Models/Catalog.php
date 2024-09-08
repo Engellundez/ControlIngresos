@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 
 class Catalog extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
+	protected $connection = 'sqlsrv';
 	protected $fillable = [
 		'type_id',
 		'name',
-		'es_necesario',
 		'description'
 	];
 
@@ -42,4 +45,14 @@ class Catalog extends Model
 	const ENTERTAINMENT = 19;	// ENTRETENIMIENTO
 	const DRUGS = 20;	// DROGAS
 	const BAD_LUCK = 21;	// MALA SUERTE
+
+	public function type(): BelongsTo
+	{
+		return $this->belongsTo(Type::class, 'type_id', 'id');
+	}
+
+	public function scopeActivitiesForUser(Builder $query) {
+		$available_types = Type::TYPES_FOR_USERS;
+		$query->whereIntegerInRaw('type_id', $available_types)->orderBy('name');
+	}
 }

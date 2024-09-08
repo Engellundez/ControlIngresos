@@ -7,15 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Owe extends Model
 {
-    use HasFactory;
+	use HasFactory;
 
-    protected $fillable = [
-        'debtor_id',
-        'activity_id',
-        'amount',
-        'payment',
-        'payment_date'
-    ];
+	protected $fillable = [
+		'debtor_id',
+		'activity_id'
+	];
 
 	// ATTRIBUTES
 	public function getFormattedCreatedAtAttribute()
