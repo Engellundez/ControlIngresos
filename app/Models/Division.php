@@ -18,7 +18,7 @@ class Division extends Model
 		'expected_amount'
 	];
 
-	public function account(): BelongsTo
+	public function userAccount(): BelongsTo
 	{
 		return $this->belongsTo(Account::class, 'id', 'account_id');
 	}

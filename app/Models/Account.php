@@ -24,9 +24,9 @@ class Account extends Model
 		return $this->belongsTo(User::class, 'id', 'user_id');
 	}
 
-	public function wallets(): HasMany
+	public function accountMoney(): HasMany
 	{
-		return $this->hasMany(Wallet::class, 'account_id', 'id');
+		return $this->hasMany(AccountMoney::class, 'account_id', 'id');
 	}
 
 	public function division(): HasMany

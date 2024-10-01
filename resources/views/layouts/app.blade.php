@@ -39,5 +39,8 @@
 	</div>
 </body>
 @stack('scripts')
+<script>
+	window._TOKEN = '{{ csrf_token() }}';
+</script>
 
 </html>

@@ -20,29 +20,29 @@ class Activity extends Model
 		'description',
 		'amount',
 		'activity_date',
-		'wallet_id',
+		'account_money_id',
 	];
 
-	protected $appends = ['formatted_activity_date', 'wallet_name', 'motion'];
+	protected $appends = ['formatted_activity_date', 'account_money_name', 'motion'];
 	// RELATIONS
-	public function wallet(): BelongsTo
+	public function account_money(): BelongsTo
 	{
-		return $this->belongsTo(Wallet::class, 'wallet_id', 'id');
+		return $this->belongsTo(AccountMoney::class, 'account_money_id', 'id');
 	}
 
-	public function motionRelation(): BelongsTo
+	public function motion_relation(): BelongsTo
 	{
 		return $this->belongsTo(Catalog::class, 'activitable_id', 'id');
 	}
 	// ATTRIBUTES
 	public function getMotionAttribute()
 	{
-		return $this->motionRelation->name;
+		return $this->motion_relation->name;
 	}
 
-	public function getWalletNameAttribute()
+	public function getAccountMoneyNameAttribute()
 	{
-		return $this->wallet->name ?? 'S/D';
+		return $this->account_money->name ?? 'S/D';
 	}
 
 	public function getFormattedActivityDateAttribute()

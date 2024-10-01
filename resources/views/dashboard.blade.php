@@ -31,8 +31,6 @@
 
 	@push('scripts')
 		<script>
-			window._TOKEN = '{{ csrf_token() }}';
-
 			function getDatesLastMonth() {
 				let to_date = new Date();
 				let from_date = new Date(to_date); // Copiar la fecha actual

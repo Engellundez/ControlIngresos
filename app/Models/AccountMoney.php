@@ -9,31 +9,40 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Wallet extends Model
+class AccountMoney extends Model
 {
 	use HasFactory, SoftDeletes;
 
+	protected $connection = 'sqlsrv';
+	protected $table = 'accounts_of_money';
 	protected $fillable = [
 		'account_id',
 		'name',
-		'is_card',
 		'amount',
+		'number',
 		'is_active',
+		'is_card',
+		'is_credit',
 	];
 
 	// RELATIONS
-	public function account(): BelongsTo
+	public function userAccount(): BelongsTo
 	{
 		return $this->belongsTo(Account::class, 'id', 'account_id');
 	}
 
 	public function activities(): HasMany
 	{
-		return $this->hasMany(Activity::class, 'wallet_id', 'id');
+		return $this->hasMany(Activity::class, 'account_money_id', 'id');
+	}
+
+	public function creditCard()
+	{
+		return $this->hasOne(CreditCard::class, 'account_money_id', 'id');
 	}
 
 	// SCOPES
-	public function scopeWallets(Builder $query, $id_account)
+	public function scopeAccountsOfMoney(Builder $query, $id_account)
 	{
 		$query->where([['account_id', '=', $id_account], ['is_active', '=', true]]);
 	}

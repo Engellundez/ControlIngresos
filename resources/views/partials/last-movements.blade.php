@@ -17,8 +17,8 @@
 	<div x-data="last_moves()" x-init="icons = @js($icons);
 colors = @js($colors);
 symbols = @js($symbols);
-walletsIcons = @js($walletsIcons);
-initial();">
+accountsIcons = @js($accountsIcons);
+initial();" @update-data.window="getActivities">
 		<div id="card" class="md:pl-4">
 			<div class="card-body pl-3 md:pl6">
 				<ul role="list" class="list">
@@ -27,15 +27,15 @@ initial();">
 							<li class="item-list">
 								<div class="row">
 									<div class="column-image">
-										<i class="fa-solid" :class="walletsIcons[activity.wallet.is_card] + ' ' + colors[activity.activitable_type]"></i>
+										<i class="fa-solid" :class="getIcon(activity)"></i>
 										<i class="secondary-image fa-solid" :class="icons[activity.activitable_type] + ' ' + colors[activity.activitable_type]"></i>
 									</div>
 									<div class="column-content">
-										<p class="principal-text" x-text="titleActivity(activity.wallet_name,activity.description)"></p>
+										<p class="principal-text" x-text="titleActivity(activity.account_money_name,activity.description)"></p>
 										<p class="secondary-text" x-text="activity.motion"></p>
 										<small class="secondary-text" x-text="activity.formatted_activity_date"></small>
 									</div>
-									<div class="column-mount" :class="colors[activity.activitable_type]" x-text="symbols[activity.activitable_type] +' $'+activity.amount"></div>
+									<div class="column-mount" :class="colors[activity.activitable_type]" x-text="symbols[activity.activitable_type] + formatCurrency(activity.amount)"></div>
 								</div>
 							</li>
 						</template>
@@ -63,7 +63,7 @@ initial();">
 				colors: null,
 				symbols: null,
 				activities: [],
-				walletsIcons: null,
+				accountsIcons: null,
 				list_open_index: 0,
 				from_date: null,
 				to_date: null,
@@ -99,20 +99,25 @@ initial();">
 						})
 						.then((data) => {
 							this.activities = data;
+							while (this.activities.length > 4) {
+								this.activities.pop();
+							}
 						})
 						.catch((e) => {
-							console.log(e);
+							console.error(e);
 							this.activities = null;
 						})
 				},
-				titleActivity(wallet = null, description = null) {
-					let text = wallet;
+				titleActivity(account = null, description = null) {
+					let text = account;
 					if (description != null && description != 'null' && description != '') {
 						text += ' > ' + description
 					};
 					return text;
 				},
-
+				getIcon(activity) {
+					return this.accountsIcons[activity.account_money.is_card == 1 ? (activity.account_money.is_credit == 1 ? 2 : 1) : 0] + ' ' + this.colors[activity.activitable_type];
+				}
 			}
 		}
 	</script>

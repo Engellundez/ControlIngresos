@@ -11,18 +11,16 @@ return new class extends Migration
 	 */
 	public function up(): void
 	{
-		Schema::create('activities', function (Blueprint $table) {
+		Schema::create('credit_cards', function (Blueprint $table) {
 			$table->id();
-			$table->foreignId('account_id');
-			$table->morphs('activitable');
-			$table->text('description')->nullable();
-			$table->float('amount', 12, 0)->default(0);
-			$table->date('activity_date');
 			$table->foreignId('account_money_id');
+			$table->float('limit_credit', 12,2)->default(0);
+			$table->date('cut_off_date');
+			$table->date('payment_deadline');
 			$table->timestamps();
 			$table->softDeletes();
 
-			$table->foreign('account_id')->references('id')->on('accounts');
+			$table->foreign('account_money_id')->references('id')->on('accounts_of_money');
 		});
 	}
 
@@ -31,6 +29,6 @@ return new class extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('activities');
+		Schema::dropIfExists('credit_cards');
 	}
 };

@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\AccountMoney;
 use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\Type;
-use App\Models\Wallet;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -29,7 +29,7 @@ class ActivityFactory extends Factory
 			'amount' => 0.0,
             'description' => 'Bienvenido al Sistema de Control de Ingresos 😎',
             'activity_date' => now(),
-            'wallet_id' => Wallet::all()->random()->id,
+            'account_money_id' => AccountMoney::all()->random()->id,
         ];
     }
 }

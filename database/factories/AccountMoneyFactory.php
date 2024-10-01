@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Account;
-use App\Models\Wallet;
+use App\Models\AccountMoney;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Wallet>
  */
-class WalletFactory extends Factory
+class AccountMoneyFactory extends Factory
 {
 	/**
 	 * Define the model's default state.
@@ -17,16 +17,18 @@ class WalletFactory extends Factory
 	 * @return array<string, mixed>
 	 */
 
-	protected $model = Wallet::class;
+	protected $model = AccountMoney::class;
 
 	public function definition(): array
 	{
 		return [
 			'account_id' => Account::all()->random()->id,
 			'name' => 'EFECTIVO',
-			'is_card' => '0',
 			'amount' => 0.0,
+			'number' => null,
+			'is_card' => '0',
 			'is_active' => '1',
+			'is_credit' => '0',
 		];
 	}
 }

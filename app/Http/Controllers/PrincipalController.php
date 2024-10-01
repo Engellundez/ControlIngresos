@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\AccountMoney;
 use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\Type;
@@ -21,11 +22,11 @@ class PrincipalController extends Controller
 		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears'];
 		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300'];
 		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => ''];
-		$walletsIcons = ['fa-sack-dollar', 'fa-credit-card'];
+		$accountsIcons = ['fa-sack-dollar', 'fa-credit-card', 'fa-money-check-dollar'];
 		$type_activities = Type::TypesForUsers()->get();
 		$activities = Catalog::ActivitiesForUser()->get();
-		$my_wallets = Wallet::Wallets(Account::GetIdAccountInSession())->get();
-		return view('dashboard', compact('type_activities', 'activities', 'my_wallets', 'icons', 'colors', 'symbols', 'walletsIcons'));
+		$my_accounts = AccountMoney::AccountsOfMoney(Account::GetIdAccountInSession())->get();
+		return view('dashboard', compact('type_activities', 'activities', 'my_accounts', 'icons', 'colors', 'symbols', 'accountsIcons'));
 	}
 
 	public function last_movements(Request $request)
@@ -38,8 +39,7 @@ class PrincipalController extends Controller
 
 	private function last_movements_data($from_date, $to_date)
 	{
-		$activities = Activity::where('account_id', auth()->user()->account->id)->whereBetween('activity_date', [$from_date, $to_date])->orderByDesc('activity_date')->latest()->get();
-		return $activities;
+		return Activity::where('account_id', auth()->user()->userAccount->id)->whereBetween('activity_date', [$from_date, $to_date])->orderByDesc('activity_date')->latest()->get();
 	}
 
 	public function last_movements_format(Request $request)
@@ -53,8 +53,9 @@ class PrincipalController extends Controller
 
 		// Primero, recorremos las actividades y llenamos el $groupedData
 		foreach ($activities as $activity) {
+			// dd($activity);
 			$date = $activity->activity_date;
-			$wallet = $activity->wallet_name;
+			$wallet = $activity->account_money_name;
 
 			if (!isset($groupedData[$date])) $groupedData[$date] = [];
 			if (!isset($groupedData[$date][$wallet])) $groupedData[$date][$wallet] = 0;
@@ -135,10 +136,10 @@ class PrincipalController extends Controller
 			$activity->account_id = Account::GetIdAccountInSession();
 			$activity->activitable_type = $request->type_activity_id ?? null;
 			$activity->activitable_id = $request->activity_id ?? null;
-			$activity->description = $request->description ?? null;
+			$activity->description = $request->description != 'null' && $request->description != null ? $request->description : null;
 			$activity->amount = $request->amount ?? null;
 			$activity->activity_date = $request->date ?? null;
-			$activity->wallet_id = $request->wallet_id ?? null;
+			$activity->account_money_id = $request->account_money_id ?? null;
 			$activity->save();
 			DB::commit();
 

@@ -45,12 +45,12 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function account() {
+    public function userAccount() {
         return $this->hasOne(Account::class, 'user_id', 'id');
     }
 
 	public function getTotalCountAttribute(){
-		return $this->account->total_count;
+		return $this->userAccount->total_count;
 	}
 
 	// ATTRIBUTES

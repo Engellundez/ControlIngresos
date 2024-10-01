@@ -11,13 +11,15 @@ return new class extends Migration
 	 */
 	public function up(): void
 	{
-		Schema::create('wallets', function (Blueprint $table) {
+		Schema::create('accounts_of_money', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('account_id');
 			$table->string('name');
-			$table->boolean('is_card')->default(0);
 			$table->float('amount', 12, 0)->default(0);
+			$table->boolean('is_card')->default(0);
+			$table->string('number')->nullable();
 			$table->boolean('is_active')->default(0);
+			$table->boolean('is_credit')->default(0);
 			$table->timestamps();
 			$table->softDeletes();
 
@@ -30,6 +32,6 @@ return new class extends Migration
 	 */
 	public function down(): void
 	{
-		Schema::dropIfExists('wallets');
+		Schema::dropIfExists('accounts_of_money');
 	}
 };

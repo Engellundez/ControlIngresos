@@ -17,8 +17,8 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('wallet.index')" :active="request()->routeIs('wallet.index')">
-                        {{ __('Wallet') }}
+                    <x-nav-link :href="route('accounts.index')" :active="request()->routeIs('accounts.index')">
+                        {{ __('Accounts') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -75,8 +75,8 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('wallet.index')" :active="request()->routeIs('wallet.index')">
-                {{ __('Wallet') }}
+            <x-responsive-nav-link :href="route('accounts.index')" :active="request()->routeIs('accounts.index')">
+                {{ __('Accounts') }}
             </x-responsive-nav-link>
         </div>
 

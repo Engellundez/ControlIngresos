@@ -25,18 +25,18 @@
 	</div>
 </section>
 
-<x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister">
-	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($type_activities), @js($activities), @js($my_wallets))">
+<x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister" show>
+	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($type_activities), @js($activities), @js($my_accounts))">
 		<div>
-			<x-input-label for="wallet" :value="__('Wallet')" />
-			<x-select name="wallet" class="mt-1 block w-full" x-model="activity.wallet.data">
+			<x-input-label for="account" :value="__('Account')" />
+			<x-select name="account" class="mt-1 block w-full" x-model="activity.account.data">
 				<option value="">{{ __('Select one option') }}</option>
-				<template x-for="wallet in wallets">
-					<option :value="wallet.id" x-text="wallet.name"></option>
+				<template x-for="account in accounts">
+					<option :value="account.id" x-text="account.name + (account.is_card == 1 ? ' ' + account.number.slice(-4) : '')"></option>
 				</template>
 			</x-select>
 
-			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.wallet.error"></p>
+			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.account.error"></p>
 		</div>
 		<div>
 			<x-input-label for="type_activity" :value="__('Activity type')" />
@@ -63,20 +63,20 @@
 		</div>
 		<div>
 			<x-input-label for="activity_amount" :value="__('Activity amount')" />
-			<x-text-input name="activity_amount" x-model="activity.amount.data" type="number" :class="activity . amount . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('amount of activity')" />
+			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
 		<div>
 			<x-input-label for="activity_date" :value="__('Activity date')" />
-			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity . date . error ? 'is_invalid' : ''" class="mt-1 block w-full" />
+			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity.date.error ? 'is_invalid' : ''" class="mt-1 block w-full" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.date.error"></p>
 		</div>
 		<div>
-			<x-input-label for="activity_description" :value="__('Activity description') . ' ' . __('(Optional)')" />
-			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity . description . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" />
+			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
+			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" />
 		</div>
 		<center class="mt-10">
-			<x-secondary-button @click="$dispatch('close', 'NewRegister')">{{ __('Cancel') }}</x-secondary-button>
+			<x-secondary-button @click="$dispatch('close')">{{ __('Cancel') }}</x-secondary-button>
 			<x-primary-button @click="saveNewActivity">{{ __('Save') }}</x-primary-button>
 		</center>
 	</div>
@@ -110,10 +110,10 @@
 				choose_type: true,
 				type_activities: null,
 				activities: null,
-				wallets: null,
+				accounts: null,
 				filter_activities: null,
 				activity: {
-					wallet: {
+					account: {
 						data: null,
 						error: null,
 					},
@@ -134,14 +134,14 @@
 						error: null,
 					},
 					amount: {
-						data: 0,
+						data: null,
 						error: null,
 					},
 				},
-				setAndFilterActivies(type_activities, activities, wallets) {
+				setAndFilterActivies(type_activities, activities, accounts) {
 					this.type_activities = type_activities;
 					this.activities = activities;
-					this.wallets = wallets;
+					this.accounts = accounts;
 
 					this.$watch('activity.type_activity.data', value => {
 						this.activity.type_activity.data = value;
@@ -150,13 +150,13 @@
 					});
 				},
 				validarInfo() {
-					this.activity.wallet.error = this.activity.wallet.data == '' || this.activity.wallet.data == null ? 'La cartera es requerida.' : null;
+					this.activity.account.error = this.activity.account.data == '' || this.activity.account.data == null ? 'La cartera es requerida.' : null;
 					this.activity.type_activity.error = this.activity.type_activity.data == '' || this.activity.type_activity.data == null ? 'El tipo de actividad es requerido.' : null;
 					this.activity.activity.error = this.activity.activity.data == '' || this.activity.activity.data == null ? 'La actividad es requerida.' : null;
 					this.activity.date.error = this.activity.date.data == '' || this.activity.date.data == null ? 'La fecha es requerida.' : null;
 					this.activity.amount.error = this.activity.amount.data == '' || this.activity.amount.data == null ? 'La cantidad es requerida.' : (this.activity.amount.data <= 0 ? 'La cantidad no puede ser menor a 1' : null);
 
-					return (this.activity.wallet.error == null &&
+					return (this.activity.account.error == null &&
 						this.activity.type_activity.error == null &&
 						this.activity.activity.error == null &&
 						this.activity.date.error == null &&
@@ -169,12 +169,12 @@
 						let url = "{{ route('store_activity') }}";
 
 						data.append('_token', _TOKEN);
-						data.append('wallet_id', this.activity.wallet.data);
+						data.append('account_money_id', this.activity.account.data);
 						data.append('type_activity_id', this.activity.type_activity.data);
 						data.append('activity_id', this.activity.activity.data);
 						data.append('description', this.activity.description.data);
 						data.append('date', this.activity.date.data);
-						data.append('amount', this.activity.amount.data);
+						data.append('amount', parseCurrency(this.activity.amount.data));
 
 						fetch(url, {
 								method: "POST",
@@ -185,13 +185,17 @@
 								return res.status;
 							})
 							.then((data) => {
-								processJsonResponse(data);
+								processJsonResponse(data, this.closeModalAndUpdateGrafics);
 							})
 							.catch((e) => {
-								console.log(e);
+								processJsonResponse(e);
 							})
 					}
 				},
+				closeModalAndUpdateGrafics(){
+					this.$dispatch('close');
+					this.$dispatch('update-data');
+				}
 			}
 		}
 	</script>

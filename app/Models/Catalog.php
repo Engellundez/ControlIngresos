@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Catalog extends Model
 {
-	use HasFactory, SoftDeletes;
+	use SoftDeletes;
 
 	protected $connection = 'sqlsrv';
 	protected $fillable = [
@@ -21,6 +20,7 @@ class Catalog extends Model
 
 	// SYSTEM
 	const WELCOME = 1;
+	const EDIT_ACCOUNT_MONEY = 34;
 
 	const TRANSFER_TO_ACCOUNTS = 22;	// TRASPASO DE CUENTAS
 	// EARNINGS - INGRESOS

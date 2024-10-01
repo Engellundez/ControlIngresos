@@ -191,5 +191,9 @@ class CatalogSeeder extends Seeder
 			'type_id' => Type::PAYMENTS,
 			'name' => 'Anual (12 Meses)',
 		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::SYSTEM,
+			'name' => 'Edición de la cuenta',
+		]);
 	}
 }

@@ -1,11 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AccountMoneyController;
 use App\Http\Controllers\PrincipalController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,19 +28,17 @@ Route::middleware('auth')->controller(PrincipalController::class)->group(functio
 	Route::post('/new-activity', 'store_activity')->name('store_activity');
 });
 
-Route::middleware('auth')->name('wallet.')->controller(WalletController::class)->group(function () {
-	Route::get('/wallet', 'index')->name('index');
-	Route::get('/my-wallets', 'my_wallets')->name('my_wallets');
+Route::middleware('auth')->name('accounts.')->controller(AccountMoneyController::class)->group(function () {
+	Route::get('/accounts', 'index')->name('index');
+	Route::get('/my-accounts', 'my_accounts')->name('my_accounts');
+	Route::post('/get-account', 'getAccount')->name('get_account');
+	Route::post('/create-update-account', 'create_update')->name('cu_account');
 });
 
 Route::middleware('auth')->name('profile.')->group(function () {
 	Route::get('/profile', [ProfileController::class, 'edit'])->name('edit');
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
-});
-
-Route::name('account.')->middleware(['auth'])->controller(AccountController::class)->group(function () {
-	Route::get('/inicio', 'index')->name('index');
 });
 
 require __DIR__ . '/auth.php';

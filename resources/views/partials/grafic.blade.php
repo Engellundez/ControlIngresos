@@ -9,7 +9,7 @@
 			</p>
 		</div>
 	</header>
-	<div x-data="show_grafics()" x-init="run_data">
+	<div x-data="show_grafics()" x-init="run_data" @update-data.window="show_canvas">
 		<template x-if="!hide_canvas">
 			<div id="container">
 			</div>
@@ -60,8 +60,9 @@
 					}
 				},
 				canv() {
-					let canvas = this.createCanvas();
-					let container = document.getElementById("container");
+					const canvas = this.createCanvas();
+					const container = document.getElementById("container");
+
 					container.appendChild(canvas);
 					new Chart(canvas, {
 						type: 'line',
@@ -100,15 +101,13 @@
 						});
 				},
 				createCanvas() {
-					let canvas = document.createElement('canvas');
+					const canvas = document.createElement('canvas');
 					canvas.id = "grafics_movements";
 					return canvas;
 				},
 				destroyCanvas() {
-					canvas = document.getElementById("container");
-					if (canvas) {
-						canvas.remove();
-					}
+					const container = document.getElementById("container");
+					if (container) container.innerHTML = '';
 				}
 			}
 		}
