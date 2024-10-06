@@ -108,12 +108,12 @@
 			</div>
 			<div>
 				<x-input-label for="account_amount" :value="__('Amount')" />
-				<x-text-input name="account_amount" x-model="account.amount.data" type="text" :class="account.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Amount')" x-mask:dynamic="$money($input)" />
+				<x-text-input name="account_amount" x-model="account.amount.data" type="text" :class="account.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Amount')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
 				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.amount.error"></p>
 			</div>
 			<div class="mt-5" x-show="account.is_card.data" x-transition>
 				<x-input-label for="card_number" :value="__('Number')" />
-				<x-text-input id="card_number" name="card_number" x-model="account.number.data" :class="account.number.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" @input="$event.target.value = formatCreditCard($event.target.value)" />
+				<x-text-input id="card_number" name="card_number" x-model="account.number.data" :class="account.number.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" @input="$event.target.value = formatCreditCard($event.target.value)" @focus="$event.target.select()" />
 				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.number.error"></p>
 			</div>
 			<div class="grid grid-cols-3 gap-4 mt-10">
@@ -148,7 +148,8 @@
 					</label>
 				</div>
 			</div>
-			<div x-show="account.is_credit.data && account.is_card.data" x-transition>
+			<div class="mt-4" x-show="account.is_credit.data && account.is_card.data" x-transition>
+				<x-anotation type="info">{{ __('We remind you that since it is a credit card, the money will be handled as negative when shown in the graphs and other sections.') }}</x-anotation>
 				<div>
 					<x-input-label for="credit_limit" :value="__('Credit limit')" />
 					<x-text-input id="credit_limit" name="credit_limit" x-model="account.credit.limit.data" :class="account.credit.limit.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" x-mask:dynamic="$money($input)" />
@@ -378,7 +379,7 @@
 						if (res.ok) return res.json();
 						return Promise.reject(new Error(res.statusText || 'Error en la solicitud'));
 					}).then((response) => {
-						if(response == 'success'){
+						if (response == 'success') {
 							this.$dispatch('close');
 							this.$dispatch('reload-accounts');
 						}

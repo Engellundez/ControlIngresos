@@ -41,7 +41,9 @@
 }
 
 .column-image {
-	@apply flex-shrink-0;
+	@apply relative flex-shrink-0;
+	width: 3rem;  /* Asegura un ancho suficiente */
+	height: 3rem; /* Asegura un alto suficiente */
 }
 
 .column-image img {
@@ -49,7 +51,13 @@
 }
 
 .column-image i {
-	@apply w-5;
+	@apply text-3xl;
+}
+
+i.secondary-image {
+	@apply text-xl;
+	top: -9px;  /* Ajusta para que sobresalga por encima */
+	right: -4px;  /* Ajusta para que sobresalga a la derecha */
 }
 
 .fa-solid {
@@ -57,7 +65,7 @@
 }
 
 .column-content {
-	@apply flex-1 min-w-0 ms-4;
+	@apply flex-1 min-w-0 ms-3;
 }
 
 .column-content small {

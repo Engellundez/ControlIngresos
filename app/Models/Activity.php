@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,10 @@ class Activity extends Model
 
 	public function getAccountMoneyNameAttribute()
 	{
+		if (Controller::strToBool($this->account_money->is_card)) {
+			return $this->account_money->name . ' ' . substr($this->account_money->number, -4);
+		}
+
 		return $this->account_money->name ?? 'S/D';
 	}
 

@@ -15,10 +15,10 @@
 
 
 	<div x-data="last_moves()" x-init="icons = @js($icons);
-colors = @js($colors);
-symbols = @js($symbols);
-accountsIcons = @js($accountsIcons);
-initial();" @update-data.window="getActivities">
+	colors = @js($colors);
+	symbols = @js($symbols);
+	accountsIcons = @js($accountsIcons);
+	initial();" @update-data.window="getActivities">
 		<div id="card" class="md:pl-4">
 			<div class="card-body pl-3 md:pl6">
 				<ul role="list" class="list">
@@ -26,16 +26,16 @@ initial();" @update-data.window="getActivities">
 						<template x-for="activity in activities">
 							<li class="item-list">
 								<div class="row">
-									<div class="column-image">
-										<i class="fa-solid" :class="getIcon(activity)"></i>
-										<i class="secondary-image fa-solid" :class="icons[activity.activitable_type] + ' ' + colors[activity.activitable_type]"></i>
+									<div class="column-image relative">
+										<i class="fa-solid" :class="getIconTypeAccount(activity) + ' ' + getColor(activity)"></i>
+										<i class="secondary-image fa-solid absolute" :class="icons[activity.activitable_type] + ' ' + getColor(activity)"></i>
 									</div>
 									<div class="column-content">
 										<p class="principal-text" x-text="titleActivity(activity.account_money_name,activity.description)"></p>
 										<p class="secondary-text" x-text="activity.motion"></p>
 										<small class="secondary-text" x-text="activity.formatted_activity_date"></small>
 									</div>
-									<div class="column-mount" :class="colors[activity.activitable_type]" x-text="symbols[activity.activitable_type] + formatCurrency(activity.amount)"></div>
+									<div class="column-mount" :class="getColor(activity)" x-text="symbols[activity.activitable_type] + formatCurrency(activity.amount)"></div>
 								</div>
 							</li>
 						</template>
@@ -115,8 +115,13 @@ initial();" @update-data.window="getActivities">
 					};
 					return text;
 				},
-				getIcon(activity) {
-					return this.accountsIcons[activity.account_money.is_card == 1 ? (activity.account_money.is_credit == 1 ? 2 : 1) : 0] + ' ' + this.colors[activity.activitable_type];
+				getIconTypeAccount(activity) {
+					return this.accountsIcons[activity.account_money.is_card == 1 ? (activity.account_money.is_credit == 1 ? 2 : 1) : 0];
+				},
+				getColor(activity) {
+					// console.log("🚀 ~ getColor ~ this.colors:", this.colors)
+					// console.log("🚀 ~ getColor ~ this.colors[activity.activitable_type]:", this.colors[activity.activitable_type])
+					return this.colors[activity.activitable_type];
 				}
 			}
 		}

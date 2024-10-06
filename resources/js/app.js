@@ -12,16 +12,14 @@ const DATE_OPTIONS = {
 	timeZone: "America/Mexico_City", // Ejemplo para zona horaria -0600
 };
 
-function processJsonResponse(response, callback = null) {
+function processJsonResponse(response) {
 	if (response.response_type === "alert") {
 		alertToast(response);
-		return null;
+	}else{
+		console.error(
+			`El response_type: "${response.response_type}", no ha sido reconocido, verificar`
+		);
 	}
-
-	console.error(
-		`El response_type: "${response.response_type}", no ha sido reconocido, verificar`
-	);
-	if (callback != null) return callback();
 	return null;
 }
 

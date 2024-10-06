@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountMoneyController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\PrincipalController;
 use App\Http\Controllers\ProfileController;
 
@@ -40,5 +41,7 @@ Route::middleware('auth')->name('profile.')->group(function () {
 	Route::patch('/profile', [ProfileController::class, 'update'])->name('update');
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
 });
+
+Route::get('test', [Controller::class, 'setNewGlobal']);
 
 require __DIR__ . '/auth.php';

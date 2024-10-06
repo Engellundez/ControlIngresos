@@ -156,39 +156,39 @@ class CatalogSeeder extends Seeder
 
 		//TIPOS DE PAGO
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Diario (1 Día)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Semanal (7 Días)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Quincenal (2 Semanas)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Mensual (4 Semanas)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Bimestral (2 Meses)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Trimestral (3 Meses)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Cuatrimestral (4 Meses)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Semestral (6 Meses)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::PAYMENTS,
+			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Anual (12 Meses)',
 		]);
 		DB::table('catalogs')->insert([

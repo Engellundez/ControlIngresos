@@ -37,8 +37,8 @@ class AccountMoneyController extends Controller
 			$id_account_money = Crypt::decrypt($request->id);
 			$account = AccountMoney::findOrFail($id_account_money);
 			$account->id_crypt = $request->id;
-			unset($account->id);
 			$account->creditCard;
+			unset($account->id);
 			return $account;
 		} catch (\Throwable $th) {
 			return response()->JSON($th->getMessage(), 409);
@@ -58,15 +58,18 @@ class AccountMoneyController extends Controller
 			$account->account_id = auth()->user()->userAccount->id;
 			$account->name = strtoupper($request->name);
 			$account->amount = $request->amount;
-			$account->number = $request->is_card == 'false' ? null : $request->number;
-			$account->is_active = $request->is_active;
-			$account->is_card = $request->is_card;
-			$account->is_credit = $request->is_credit;
+			$account->number = $this->strToBool($request->is_card) ? $request->number : null;
+			$account->is_active = $this->strToBool($request->is_active);
+			$account->is_card = $this->strToBool($request->is_card);
+			$account->is_credit = $this->strToBool($request->is_credit);
 			$account->save();
 
-			if ($request->is_credit == "true") {
+			if ($this->strToBool($request->is_credit)) {
 				CreditCard::updateOrCreate(['account_money_id' => $account->id], ['limit_credit' => $request->credit_limit, 'cut_off_date' => $request->credit_cutdate, 'payment_deadline' => $request->credit_deadline]);
 				$account->creditCard;
+
+				$amount_credit = $request->credit_limit - $request->amount;
+				$amount_credit = $this->invertSign($amount_credit);
 			}
 
 			$activity = new Activity();
@@ -75,8 +78,13 @@ class AccountMoneyController extends Controller
 			$activity->activitable_id = $request->id == 'null' ? Catalog::WELCOME : Catalog::EDIT_ACCOUNT_MONEY;
 			$activity->activitable_type = Type::SYSTEM;
 			$activity->activity_date = Carbon::now();
-			$activity->amount = $request->amount;
+			if ($this->strToBool($request->is_credit)) {
+				$activity->amount = $amount_credit;
+			} else {
+				$activity->amount = $request->amount;
+			}
 			$activity->save();
+			$this->setNewGlobal();
 
 			DB::commit();
 			return response()->JSON('success');

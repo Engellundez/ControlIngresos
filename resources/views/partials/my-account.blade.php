@@ -5,7 +5,7 @@
 		</h2>
 
 		<p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-			{{ __('You have $:count in your global account.', ['count' => auth()->user()->total_count]) }}
+			{{ __('You have :count in your global account.', ['count' => auth()->user()->total_count]) }}
 		</p>
 	</header>
 	<div>
@@ -25,7 +25,7 @@
 	</div>
 </section>
 
-<x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister" show>
+<x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister">
 	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($type_activities), @js($activities), @js($my_accounts))">
 		<div>
 			<x-input-label for="account" :value="__('Account')" />
@@ -63,7 +63,7 @@
 		</div>
 		<div>
 			<x-input-label for="activity_amount" :value="__('Activity amount')" />
-			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" />
+			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
 		<div>
@@ -185,7 +185,8 @@
 								return res.status;
 							})
 							.then((data) => {
-								processJsonResponse(data, this.closeModalAndUpdateGrafics);
+								processJsonResponse(data);
+								this.closeModalAndUpdateGrafics();
 							})
 							.catch((e) => {
 								processJsonResponse(e);

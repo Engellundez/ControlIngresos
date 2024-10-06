@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ class Account extends Model
 		return $this->belongsTo(User::class, 'id', 'user_id');
 	}
 
-	public function accountMoney(): HasMany
+	public function accountsOfMoney(): HasMany
 	{
 		return $this->hasMany(AccountMoney::class, 'account_id', 'id');
 	}
@@ -62,5 +63,10 @@ class Account extends Model
 	public function getFormattedUpdatedAtAttribute()
 	{
 		return $this->updated_at->format('H:i d-m-Y');
+	}
+
+	public function getFormatTotalCountAttribute()
+	{
+		return Controller::formatCurrency($this->total_count);
 	}
 }

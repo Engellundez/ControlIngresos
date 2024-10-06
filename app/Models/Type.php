@@ -20,7 +20,7 @@ class Type extends Model
 	const EXPENSES = 2;	// GASTOS
 	const SYSTEM = 3;	// SISTEMA
 	const LOSSES = 4;	// PERDIDA
-	const PAYMENTS = 5;	// PAGOS
+	const FORMATS_PAYMENTS = 5;	// PAGOS
 
 	const TYPES_FOR_USERS = [
 		self::EARNINGS,

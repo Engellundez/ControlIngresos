@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
 	public function getTotalCountAttribute(){
-		return $this->userAccount->total_count;
+		return $this->userAccount->format_total_count;
 	}
 
 	// ATTRIBUTES

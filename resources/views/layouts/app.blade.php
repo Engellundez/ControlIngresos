@@ -36,6 +36,10 @@
 		<main>
 			{{ $slot }}
 		</main>
+		<p
+			class="text-emerald-500 dark:text-emerald-400 text-red-400 dark:text-red-400 text-sky-300 dark:text-sky-300 text-blue-800 dark:text-blue-400 text-red-800 text-green-800 dark:text-green-400 text-yellow-800 dark:text-yellow-300 text-gray-800 dark:text-gray-300 border-blue-300 dark:border-blue-800 border-red-300 dark:border-red-800 border-green-300 dark:border-green-800 border-yellow-300 dark:border-yellow-800 border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-gray-800 bg-red-50 bg-green-50 bg-yellow-50 bg-gray-50">
+		</p>
+
 	</div>
 </body>
 @stack('scripts')

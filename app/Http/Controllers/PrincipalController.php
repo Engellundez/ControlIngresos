@@ -7,7 +7,6 @@ use App\Models\AccountMoney;
 use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\Type;
-use App\Models\Wallet;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,46 +45,41 @@ class PrincipalController extends Controller
 	{
 		$from_date = Carbon::parse($request->from_date);
 		$to_date = Carbon::parse($request->to_date);
-		$activities = $this->last_movements_data($from_date, $to_date);
+		$activities = $this->last_movements_data($from_date, $to_date)->reverse();
 
 		$groupedData = [];
-		$allWallets = []; // Array para almacenar todos los nombres de wallets encontrados
+		$allAccounts = []; // Array para almacenar todos los nombres de cuentas encontradas
 
 		// Primero, recorremos las actividades y llenamos el $groupedData
 		foreach ($activities as $activity) {
-			// dd($activity);
 			$date = $activity->activity_date;
-			$wallet = $activity->account_money_name;
+			$account = $activity->account_money_name;
 
 			if (!isset($groupedData[$date])) $groupedData[$date] = [];
-			if (!isset($groupedData[$date][$wallet])) $groupedData[$date][$wallet] = 0;
-			if (!isset($groupedData[$date]['total'])) $groupedData[$date]['total'] = 0;
+			if (!isset($groupedData[$date][$account])) $groupedData[$date][$account] = 0;
 
-			// Actualizamos la cantidad para la wallet específica y el total
-			$groupedData[$date][$wallet] += $activity->amount;
-			$groupedData[$date]['total'] += $activity->amount;
+			if ($activity->activitable_type == Type::SYSTEM) {
+				$groupedData[$date][$account] = $activity->amount;
+			} else if ($activity->activitable_type == Type::EARNINGS) {
+				$groupedData[$date][$account] += $activity->amount;
+			} else if ($activity->activitable_type == Type::EXPENSES || $activity->activitable_type == Type::LOSSES) {
+				$groupedData[$date][$account] -= $activity->amount;
+			}
 
-			// Añadimos la wallet al array de todas las wallets si no está ya presente
-			if (!in_array($wallet, $allWallets)) $allWallets[] = $wallet;
+			// Añadimos la cuenta al array de todas las cuentas si no está ya presente
+			if (!in_array($account, $allAccounts)) $allAccounts[] = $account;
 		}
 
-		// Ordenar las fechas de forma ascendente
-		uksort($groupedData, function ($a, $b) {
-			$dateA = Carbon::parse($a);
-			$dateB = Carbon::parse($b);
-			return $dateA <=> $dateB; // Comparar fechas de forma ascendente
-		});
-
-		// Luego, recorremos el $groupedData y aseguramos que cada wallet esté presente con el valor previo si no existía
+		// Luego, recorremos el $groupedData y aseguramos que cada cuenta esté presente con el valor previo si no existía
 		$previousValues = [];
-		foreach ($groupedData as $date => &$wallets) {
-			foreach ($allWallets as $wallet) {
-				if (!isset($wallets[$wallet])) {
-					// Si la wallet no existe en esta fecha, usamos el valor previo o 0 si es la primera aparición
-					$wallets[$wallet] = isset($previousValues[$wallet]) ? $previousValues[$wallet] : 0.0;
+		foreach ($groupedData as $date => &$accounts) {
+			foreach ($allAccounts as $account) {
+				if (!isset($accounts[$account])) {
+					// Si la cuenta no existe en esta fecha, usamos el valor previo o 0 si es la primera aparición
+					$accounts[$account] = isset($previousValues[$account]) ? $previousValues[$account] : 0.0;
 				} else {
 					// Actualizamos el valor previo
-					$previousValues[$wallet] = $wallets[$wallet];
+					$previousValues[$account] = $accounts[$account];
 				}
 			}
 		}
@@ -95,14 +89,14 @@ class PrincipalController extends Controller
 		$datasets = [];
 		$colorIndex = 0;
 
-		foreach ($groupedData as $date => $walletData) {
-			foreach ($walletData as $walletName => $totalAmount) {
-				if (!isset($datasets[$walletName])) {
+		foreach ($groupedData as $date => $accountData) {
+			foreach ($accountData as $accountName => $totalAmount) {
+				if (!isset($datasets[$accountName])) {
 					// Obtener el color correspondiente y avanzar al siguiente índice
 					$color = self::COLORS[$colorIndex % count(self::COLORS)];
 					$colorIndex++; // Incrementar el índice para el siguiente color
-					$datasets[$walletName] = [
-						'label' => $walletName,
+					$datasets[$accountName] = [
+						'label' => $accountName,
 						'data' => [],
 						'fill' => false,
 						'borderColor' => $color,
@@ -111,7 +105,7 @@ class PrincipalController extends Controller
 				}
 
 				// Agregar el monto para la fecha correspondiente
-				$datasets[$walletName]['data'][] = $totalAmount;
+				$datasets[$accountName]['data'][] = $totalAmount;
 			}
 		}
 		// Convertir $datasets en una lista numerada de objetos
@@ -132,6 +126,15 @@ class PrincipalController extends Controller
 	{
 		DB::beginTransaction();
 		try {
+			$account = AccountMoney::findOrFail($request->account_money_id);
+			if ($request->type_activity_id == Type::EARNINGS) {
+				$new_amount = $account->amount + $request->amount;
+			} else {
+				$new_amount = $account->amount - $request->amount;
+			}
+			$account->amount = $new_amount;
+			$account->save();
+
 			$activity = new Activity();
 			$activity->account_id = Account::GetIdAccountInSession();
 			$activity->activitable_type = $request->type_activity_id ?? null;
@@ -139,8 +142,10 @@ class PrincipalController extends Controller
 			$activity->description = $request->description != 'null' && $request->description != null ? $request->description : null;
 			$activity->amount = $request->amount ?? null;
 			$activity->activity_date = $request->date ?? null;
-			$activity->account_money_id = $request->account_money_id ?? null;
+			$activity->account_money_id = $account->id ?? null;
 			$activity->save();
+
+			$this->setNewGlobal();
 			DB::commit();
 
 			return response()->JSON(["response_type" => "alert", "response" => ["type" => "success", "message" => "La actividad se ha guardado correctamente"]]);
