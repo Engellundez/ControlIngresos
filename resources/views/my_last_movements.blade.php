@@ -105,11 +105,9 @@
 						return text;
 					},
 					getIconTypeAccount(activity) {
-						return this.accountsIcons[activity.account_money.is_card == 1 ? (activity.account_money.is_credit == 1 ? 2 : 1) : 0];
+						return this.accountsIcons[activity.account_money?.is_card == 1 ? (activity.account_money.is_credit == 1 ? 2 : 1) : 0];
 					},
 					getColor(activity) {
-						// console.log("🚀 ~ getColor ~ this.colors:", this.colors)
-						// console.log("🚀 ~ getColor ~ this.colors[activity.activitable_type]:", this.colors[activity.activitable_type])
 						return this.colors[activity.activitable_type];
 					}
 				}

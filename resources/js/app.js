@@ -3,6 +3,7 @@ import Alpine from "alpinejs";
 import mask from "@alpinejs/mask";
 import { driver } from "driver.js";
 import Chart from "chart.js/auto";
+import Swal from 'sweetalert2'
 
 // Configuración de opciones para obtener el formato deseado en la zona horaria -0600
 const DATE_OPTIONS = {
@@ -60,6 +61,7 @@ Alpine.plugin(mask);
 
 window.Alpine = Alpine;
 window.Chart = Chart;
+window.Swal = Swal;
 window.showTutorial = driver();
 window.processJsonResponse = processJsonResponse;
 window.alertToast = alertToast;

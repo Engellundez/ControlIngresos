@@ -95,7 +95,25 @@ class AccountMoneyController extends Controller
 			return response()->JSON(["response_type" => "alert", "response" => ["type" => "success", "message" => $message]]);
 		} catch (\Throwable $th) {
 			DB::rollBack();
-			throw $th;
+			return $th->getMessage();
+		}
+	}
+
+	public function delete_account(Request $request)
+	{
+		DB::beginTransaction();
+		try {
+			$id_account = Crypt::decrypt($request->id);
+			$account = AccountMoney::findOrFail($id_account);
+			foreach ($account->activities as $activity) {
+				$activity->delete();
+			}
+			$account->delete();
+			$this->setNewGlobal();
+			DB::commit();
+			return response()->JSON(["response_type" => "alert", "response" => ["type" => "success", "message" => 'La cuenta ha sido eliminada correctamente.']]);
+		} catch (\Throwable $th) {
+			DB::rollBack();
 			return $th->getMessage();
 		}
 	}

@@ -36,6 +36,7 @@ Route::middleware('auth')->name('accounts.')->controller(AccountMoneyController:
 	Route::get('/my-accounts', 'my_accounts')->name('my_accounts');
 	Route::post('/get-account', 'getAccount')->name('get_account');
 	Route::post('/create-update-account', 'create_update')->name('cu_account');
+	Route::delete('/delete-account', 'delete_account')->name('delete_account');
 });
 
 Route::middleware('auth')->name('profile.')->group(function () {

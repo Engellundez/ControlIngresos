@@ -43,7 +43,7 @@ class Activity extends Model
 
 	public function getAccountMoneyNameAttribute()
 	{
-		if (Controller::strToBool($this->account_money->is_card)) {
+		if (Controller::strToBool($this->account_money?->is_card)) {
 			return $this->account_money->name . ' ' . substr($this->account_money->number, -4);
 		}
 
