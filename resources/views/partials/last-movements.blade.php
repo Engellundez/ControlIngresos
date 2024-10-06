@@ -8,7 +8,7 @@
 				{{ __('Here you can see the latest movements of your accounts.') }}
 			</p>
 		</div>
-		<a href="#" class="link-header-card">
+		<a href="{{ route('my_last_movements') }}" class="link-header-card">
 			{{ __('View all') }}
 		</a>
 	</header>

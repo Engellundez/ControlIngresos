@@ -8,6 +8,7 @@ use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\Type;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -30,15 +31,17 @@ class PrincipalController extends Controller
 
 	public function last_movements(Request $request)
 	{
-		$from_date = Carbon::parse($request->from_date);
-		$to_date = Carbon::parse($request->to_date);
+		$from_date = $request->from_date ? Carbon::parse($request->from_date) : null;
+		$to_date = $request->from_date ? Carbon::parse($request->to_date) : null;
 		$activities = $this->last_movements_data($from_date, $to_date);
 		return response()->JSON($activities);
 	}
 
 	private function last_movements_data($from_date, $to_date)
 	{
-		return Activity::where('account_id', auth()->user()->userAccount->id)->whereBetween('activity_date', [$from_date, $to_date])->orderByDesc('activity_date')->latest()->get();
+		return Activity::where('account_id', auth()->user()->userAccount->id)->when($from_date, function (Builder $query) use ($from_date, $to_date) {
+			return $query->whereBetween('activity_date', [$from_date, $to_date]);
+		})->orderByDesc('activity_date')->latest()->get();
 	}
 
 	public function last_movements_format(Request $request)
@@ -153,5 +156,15 @@ class PrincipalController extends Controller
 			DB::rollBack();
 			return response()->JSON(["response_type" => "alert", "response" => ["type" => "error", "message" => "La actividad no se pudo guardar, ERROR:" . PHP_EOL . PHP_EOL . $th->getMessage()]]);
 		}
+	}
+
+	public function my_last_movements()
+	{
+		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears'];
+		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300'];
+		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => ''];
+		$accountsIcons = ['fa-sack-dollar', 'fa-credit-card', 'fa-money-check-dollar'];
+
+		return view('my_last_movements', compact('icons', 'colors', 'symbols', 'accountsIcons'));
 	}
 }

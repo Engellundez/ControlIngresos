@@ -51,9 +51,13 @@ class AccountMoneyController extends Controller
 		try {
 			if ($request->id == 'null') {
 				$account = new AccountMoney();
+				$message = "La cuenta se ha registrado correctamente";
+				$description = "Bienvenido al Sistema de Control de Ingresos 😎";
 			} else {
 				$id_account_money = Crypt::decrypt($request->id);
 				$account = AccountMoney::findOrFail($id_account_money);
+				$message = "La cuenta se ha editado correctamente";
+				$description = "🛠👨🏼‍🏭✍🏼 Editando un poco 🛠👨🏼‍🏭✍🏼";
 			}
 			$account->account_id = auth()->user()->userAccount->id;
 			$account->name = strtoupper($request->name);
@@ -77,6 +81,7 @@ class AccountMoneyController extends Controller
 			$activity->account_money_id = $account->id;
 			$activity->activitable_id = $request->id == 'null' ? Catalog::WELCOME : Catalog::EDIT_ACCOUNT_MONEY;
 			$activity->activitable_type = Type::SYSTEM;
+			$activity->description = $description;
 			$activity->activity_date = Carbon::now();
 			if ($this->strToBool($request->is_credit)) {
 				$activity->amount = $amount_credit;
@@ -87,7 +92,7 @@ class AccountMoneyController extends Controller
 			$this->setNewGlobal();
 
 			DB::commit();
-			return response()->JSON('success');
+			return response()->JSON(["response_type" => "alert", "response" => ["type" => "success", "message" => $message]]);
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;
