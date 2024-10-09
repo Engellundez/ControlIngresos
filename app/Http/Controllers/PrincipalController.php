@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class PrincipalController extends Controller
 {
 
-	const COLORS = ['#8A2BE2', '#5F9EA0', '#006400', '#8B0000', '#4B0082', '#7FFFD4', '#8FBC8F', '#FF4500', '#EE82EE', '#48D1CC', '#008000', '#FA8072'];
+	const COLORS = ['#2A9D2A','#D4B000','#00CCCC','#CC8400','#CC00CC','#6FCC00','#3656A1','#CC117A','#7D5FB6','#D9D9B3','#CC3700','#00A5A0','#1A9589','#91CC24','#CC7000','#6DA8D1','#CC4F3A','#6B006B','#3A6D92','#B89C7A'];
 
 	public function dashboard()
 	{
@@ -50,6 +50,7 @@ class PrincipalController extends Controller
 		$to_date = Carbon::parse($request->to_date);
 		$activities = $this->last_movements_data($from_date, $to_date)->reverse();
 
+		$last_date = null;
 		$groupedData = [];
 		$allAccounts = []; // Array para almacenar todos los nombres de cuentas encontradas
 
@@ -58,9 +59,19 @@ class PrincipalController extends Controller
 			$date = $activity->activity_date;
 			$account = $activity->account_money_name;
 
+			// Si es una nueva fecha, propagamos los saldos de todas las cuentas
+			if ($last_date != $date && $last_date !== null) {
+				foreach ($allAccounts as $acc) {
+					if (!isset($groupedData[$date][$acc])) {
+						$groupedData[$date][$acc] = isset($groupedData[$last_date][$acc]) ? $groupedData[$last_date][$acc] : 0;
+					}
+				}
+			}
+			// Inicializamos los valores para la cuenta si no existen
 			if (!isset($groupedData[$date])) $groupedData[$date] = [];
 			if (!isset($groupedData[$date][$account])) $groupedData[$date][$account] = 0;
 
+			// Actualizamos el saldo basado en el tipo de actividad
 			if ($activity->activitable_type == Type::SYSTEM) {
 				$groupedData[$date][$account] = $activity->amount;
 			} else if ($activity->activitable_type == Type::EARNINGS) {
@@ -69,8 +80,8 @@ class PrincipalController extends Controller
 				$groupedData[$date][$account] -= $activity->amount;
 			}
 
-			// Añadimos la cuenta al array de todas las cuentas si no está ya presente
 			if (!in_array($account, $allAccounts)) $allAccounts[] = $account;
+			$last_date = $date;
 		}
 
 		// Luego, recorremos el $groupedData y aseguramos que cada cuenta esté presente con el valor previo si no existía

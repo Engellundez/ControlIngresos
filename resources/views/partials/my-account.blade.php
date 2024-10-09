@@ -12,14 +12,22 @@
 		<div class="flex justify-end" x-data>
 			<x-primary-button @click="$dispatch('open-modal', 'NewRegister')"><i class="fa-solid fa-plus"></i>&nbsp;&nbsp;{{ __('Register activity') }}</x-primary-button>
 		</div>
-		<div class="grid grid-cols-4 gap-6" x-data="dates()" x-init="stablish_date()">
-			<div class="col-span-2 p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+		<div class="grid grid-cols-3 gap-6" x-data="dates()" x-init="stablish_date()">
+			<div class="p-4 sm:p-8 bg-white dark:bg-gray-800 sm:rounded-lg">
 				<x-input-label for="from_date" :value="__('From Date')" />
 				<x-text-input name="from_date" x-model="from_date" type="date" class="mt-1 block w-full" />
 			</div>
-			<div class="col-span-2 p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+			<div class="p-4 sm:p-8 bg-white dark:bg-gray-800 sm:rounded-lg">
 				<x-input-label for="to_date" :value="__('To Date')" />
 				<x-text-input name="to_date" x-model="to_date" type="date" class="mt-1 block w-full" />
+			</div>
+			<div class="p-4 sm:p-8 bg-white dark:bg-gray-800 sm:rounded-lg flex items-center">
+				<x-secondary-button class="mt-5"
+					@click="$dispatch('update-data');
+        			rotate = true;
+        			setTimeout(() => rotate = false, 2000);">
+					<i class="fa-solid fa-arrows-rotate" :class="rotate ? 'fa-spin' : ''"></i>&nbsp;&nbsp;{{ __('Update Info') }}
+				</x-secondary-button>
 			</div>
 		</div>
 	</div>
@@ -67,13 +75,13 @@
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
 		<div>
+			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
+			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" />
+		</div>
+		<div>
 			<x-input-label for="activity_date" :value="__('Activity date')" />
 			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity.date.error ? 'is_invalid' : ''" class="mt-1 block w-full" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.date.error"></p>
-		</div>
-		<div>
-			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
-			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" />
 		</div>
 		<center class="mt-10">
 			<x-secondary-button @click="$dispatch('close')">{{ __('Cancel') }}</x-secondary-button>
@@ -87,6 +95,7 @@
 			return {
 				from_date: null,
 				to_date: null,
+				rotate: false,
 				stablish_date() {
 					this.$watch('from_date', value => {
 						document.dispatchEvent(new CustomEvent('set-from', {
@@ -193,9 +202,38 @@
 							})
 					}
 				},
-				closeModalAndUpdateGrafics(){
+				closeModalAndUpdateGrafics() {
+					this.clearData();
 					this.$dispatch('close');
 					this.$dispatch('update-data');
+				},
+				clearData() {
+					this.activity = {
+						account: {
+							data: null,
+							error: null,
+						},
+						type_activity: {
+							data: null,
+							error: null,
+						},
+						activity: {
+							data: null,
+							error: null,
+						},
+						description: {
+							data: null,
+							error: null,
+						},
+						date: {
+							data: new Date().toLocaleString('sv-SE', DATE_OPTIONS).split(' ')[0],
+							error: null,
+						},
+						amount: {
+							data: null,
+							error: null,
+						},
+					}
 				}
 			}
 		}

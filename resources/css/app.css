@@ -57,7 +57,7 @@
 i.secondary-image {
 	@apply text-xl;
 	top: -9px;  /* Ajusta para que sobresalga por encima */
-	right: -4px;  /* Ajusta para que sobresalga a la derecha */
+	right: 2px;  /* Ajusta para que sobresalga a la derecha */
 }
 
 .fa-solid {

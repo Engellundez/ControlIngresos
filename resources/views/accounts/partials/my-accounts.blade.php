@@ -174,9 +174,19 @@
 			</center>
 		</div>
 	</x-modal>
+
+	<x-modal name="ShowInfoAccount" class="mx-auto max-w-lg" id="ShowInfoAccount">
+
+	</x-modal>
 </section>
 @push('scripts')
 	<script>
+		function show_account(){
+			return {
+
+			}
+		}
+
 		function my_accounts() {
 			return {
 				has_accounts: false,
