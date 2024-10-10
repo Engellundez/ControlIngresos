@@ -71,16 +71,16 @@
 		</div>
 		<div>
 			<x-input-label for="activity_amount" :value="__('Activity amount')" />
-			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
+			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity . amount . error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
 		<div>
-			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
-			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" />
+			<x-input-label for="activity_description" :value="__('Activity description') . ' ' . __('(Optional)')" />
+			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity . description . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" @keyup.enter="saveNewActivity" />
 		</div>
 		<div>
 			<x-input-label for="activity_date" :value="__('Activity date')" />
-			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity.date.error ? 'is_invalid' : ''" class="mt-1 block w-full" />
+			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity . date . error ? 'is_invalid' : ''" class="mt-1 block w-full" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.date.error"></p>
 		</div>
 		<center class="mt-10">
@@ -173,34 +173,45 @@
 					);
 				},
 				saveNewActivity() {
-					if (this.validarInfo()) {
-						const data = new FormData();
-						let url = "{{ route('store_activity') }}";
+					if (!this.validarInfo()) return null;
+					Swal.fire({
+						icon: 'question',
+						title: "{{ __('Register activity') }}",
+						showConfirmButton: true,
+						showCancelButton: true,
+						reverseButtons: true,
+						confirmButtonText: "{{ __('Save') }}",
+						cancelButtonText: "{{ __('Cancel') }}",
+					}).then((result) => {
+						if (result.isConfirmed) {
+							const data = new FormData();
+							let url = "{{ route('store_activity') }}";
 
-						data.append('_token', _TOKEN);
-						data.append('account_money_id', this.activity.account.data);
-						data.append('type_activity_id', this.activity.type_activity.data);
-						data.append('activity_id', this.activity.activity.data);
-						data.append('description', this.activity.description.data);
-						data.append('date', this.activity.date.data);
-						data.append('amount', parseCurrency(this.activity.amount.data));
+							data.append('_token', _TOKEN);
+							data.append('account_money_id', this.activity.account.data);
+							data.append('type_activity_id', this.activity.type_activity.data);
+							data.append('activity_id', this.activity.activity.data);
+							data.append('description', this.activity.description.data);
+							data.append('date', this.activity.date.data);
+							data.append('amount', parseCurrency(this.activity.amount.data));
 
-						fetch(url, {
-								method: "POST",
-								body: data,
-							})
-							.then((res) => {
-								if (res.ok) return res.json();
-								return res.status;
-							})
-							.then((data) => {
-								processJsonResponse(data);
-								this.closeModalAndUpdateGrafics();
-							})
-							.catch((e) => {
-								processJsonResponse(e);
-							})
-					}
+							fetch(url, {
+									method: "POST",
+									body: data,
+								})
+								.then((res) => {
+									if (res.ok) return res.json();
+									return res.status;
+								})
+								.then((data) => {
+									processJsonResponse(data);
+									this.closeModalAndUpdateGrafics();
+								})
+								.catch((e) => {
+									processJsonResponse(e);
+								})
+						}
+					})
 				},
 				closeModalAndUpdateGrafics() {
 					this.clearData();
