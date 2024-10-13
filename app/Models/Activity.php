@@ -16,10 +16,12 @@ class Activity extends Model
 	protected $connection = 'sqlsrv';
 	protected $fillable = [
 		'account_id',
+		'payment_method_id',
 		'activitable_id',
 		'activitable_type',
 		'description',
 		'amount',
+		'last_amount',
 		'activity_date',
 		'account_money_id',
 	];
@@ -34,6 +36,11 @@ class Activity extends Model
 	public function motion_relation(): BelongsTo
 	{
 		return $this->belongsTo(Catalog::class, 'activitable_id', 'id');
+	}
+
+	public function payment_method(): BelongsTo
+	{
+		return $this->belongsTo(Catalog::class, 'payment_method_id', 'id');
 	}
 	// ATTRIBUTES
 	public function getMotionAttribute()

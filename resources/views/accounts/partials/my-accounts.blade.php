@@ -65,8 +65,8 @@
 									</td>
 									<td class="px-4 py-2">
 										<center class="grid grid-cols-2 gap-5">
-											<button class="py-2 text-sm font-medium text-white bg-yellow-700 rounded hover:bg-yellow-800 dark:bg-yellow-600 dark:hover:bg-yellow-500" @click="$dispatch('edit-account', account.id_crypt)"><i class="fa-solid fa-pen-to-square"></i></button>
-											<button class="py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-600 dark:bg-red-500 dark:hover:bg-red-400" @click="deleteAccount(account)"><i class="fa-solid fa-trash"></i></button>
+											<button class="py-2 text-sm font-medium text-white bg-yellow-400 rounded hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-500" @click="$dispatch('edit-account', account.id_crypt)"><i class="fa-solid fa-pen-to-square"></i></button>
+											<button class="py-2 text-sm font-medium text-white bg-red-500 rounded hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-400" @click="deleteAccount(account)"><i class="fa-solid fa-trash"></i></button>
 										</center>
 									</td>
 								</tr>
@@ -90,7 +90,7 @@
 	</div>
 
 	<x-modal name="NewOrEditAccount" class="mx-auto max-w-lg" id="NewOrEditAccount">
-		<div x-data="new_or_edit_account()" @edit-account.window="updateAccount($event.detail)" @new-account.window="newAccount()">
+		<div x-data="new_or_edit_account()" @edit-account.window="updateAccount($event.detail)" @new-account.window="newAccount()" @keyup.enter="save()">
 			<center>
 				<h2>
 					<div class="grid grid-cols-4 gap-1">
@@ -101,21 +101,6 @@
 					</div>
 				</h2>
 			</center>
-			<div>
-				<x-input-label for="account_name" :value="__('Name')" />
-				<x-text-input name="account_name" x-model="account.name.data" autocomplete="off" type="text" :class="account . name . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Name')" @input="$event.target.value = $event.target.value.toUpperCase()" />
-				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.name.error"></p>
-			</div>
-			<div>
-				<x-input-label for="account_amount" :value="__('Amount')" />
-				<x-text-input name="account_amount" x-model="account.amount.data" type="text" :class="account . amount . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Amount')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
-				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.amount.error"></p>
-			</div>
-			<div class="mt-5" x-show="account.is_card.data" x-transition>
-				<x-input-label for="card_number" :value="__('Number')" />
-				<x-text-input id="card_number" name="card_number" x-model="account.number.data" :class="account . number . error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" @input="$event.target.value = formatCreditCard($event.target.value)" @focus="$event.target.select()" />
-				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.number.error"></p>
-			</div>
 			<div class="grid grid-cols-3 gap-4 mt-10">
 				<div>
 					<label class="inline-flex items-center cursor-pointer">
@@ -148,22 +133,37 @@
 					</label>
 				</div>
 			</div>
+			<div class="mt-5">
+				<x-input-label for="account_name" :value="__('Name')" />
+				<x-text-input name="account_name" x-model="account.name.data" autocomplete="off" type="text" :class="account.name.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Name')" @input="$event.target.value = $event.target.value.toUpperCase()" />
+				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.name.error"></p>
+			</div>
+			<div>
+				<x-input-label for="account_amount" :value="__('Amount')" />
+				<x-text-input name="account_amount" x-model="account.amount.data" type="text" :class="account.amount.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Amount')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
+				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.amount.error"></p>
+			</div>
+			<div class="mt-5" x-show="account.is_card.data" x-transition>
+				<x-input-label for="card_number" :value="__('Number')" />
+				<x-text-input id="card_number" name="card_number" type="text" x-model="account.number.data" :class="account.number.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" @input="$event.target.value = formatCreditCard($event.target.value)" @focus="$event.target.select()" />
+				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.number.error"></p>
+			</div>
 			<div class="mt-4" x-show="account.is_credit.data && account.is_card.data" x-transition>
 				<x-anotation type="info">{{ __('We remind you that since it is a credit card, the money will be handled as negative when shown in the graphs and other sections.') }}</x-anotation>
 				<div>
 					<x-input-label for="credit_limit" :value="__('Credit limit')" />
-					<x-text-input id="credit_limit" name="credit_limit" x-model="account.credit.limit.data" :class="account . credit . limit . error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" x-mask:dynamic="$money($input)" />
+					<x-text-input id="credit_limit" name="credit_limit" type="text" x-model="account.credit.limit.data" :class="account.credit.limit.error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" placeholder="0" autocomplete="off" x-mask:dynamic="$money($input)" />
 					<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.credit.limit.error"></p>
 				</div>
 				<div class="grid grid-cols-2 gap-4">
 					<div>
 						<x-input-label for="credit_cutdate" :value="__('Cut-off date')" />
-						<x-text-input name="credit_cutdate" x-model="account.credit.cutdate.data" type="date" :class="account . credit . cutdate . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Cut-off date')" />
+						<x-text-input name="credit_cutdate" x-model="account.credit.cutdate.data" type="date" :class="account.credit.cutdate.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Cut-off date')" />
 						<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.credit.cutdate.error"></p>
 					</div>
 					<div>
 						<x-input-label for="credit_deadline" :value="__('Payment deadline')" />
-						<x-text-input name="credit_deadline" x-model="account.credit.deadline.data" type="date" :class="account . credit . deadline . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Payment deadline')" />
+						<x-text-input name="credit_deadline" x-model="account.credit.deadline.data" type="date" :class="account.credit.deadline.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Payment deadline')" />
 						<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="account.credit.deadline.error"></p>
 					</div>
 				</div>
@@ -181,7 +181,7 @@
 </section>
 @push('scripts')
 	<script>
-		function show_account(){
+		function show_account() {
 			return {
 
 			}

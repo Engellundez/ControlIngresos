@@ -17,7 +17,7 @@ return new class extends Migration
 			$table->foreignId('debtor_id');
 			$table->timestamps();
 
-			$table->foreign('activity_id')->references('id')->on('activities');
+			$table->foreign('debtor_id')->references('id')->on('debtors');
 		});
 	}
 

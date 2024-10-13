@@ -20,31 +20,36 @@ class Catalog extends Model
 
 	// SYSTEM
 	const WELCOME = 1;
-	const EDIT_ACCOUNT_MONEY = 34;
+	const EDIT_ACCOUNT_MONEY = 2;
 
-	const TRANSFER_TO_ACCOUNTS = 22;	// TRASPASO DE CUENTAS
+	// const TRANSFER_TO_ACCOUNTS = 22;	// TRASPASO DE CUENTAS
 	// EARNINGS - INGRESOS
-	const JOB = 2;	// TRABAJO
-	const DONATION = 3;	// DONACIÓN
-	const PRIZE = 4;	// PREMIO
-	const SUPPORT = 5;	// APOYO
-	const LUCK = 6;	// SUERTE
-	const ILLICIT = 7;	// ILEGAL
-	const GIFT = 8;	// PREMIO
-	const DEBT_PAYMENTS = 9;	// ABONO DE DEUDA
-	const SELL_OF_ARTICLES = 10;	// VENTA DE ARTICULOS
-	const LOANS = 11;	// PRESTAMOS
+	const JOB = 3;	// TRABAJO
+	const DONATION = 4;	// DONACIÓN
+	const PRIZE = 5;	// PREMIO
+	const SUPPORT = 6;	// APOYO
+	const LUCK = 7;	// SUERTE
+	const ILLICIT = 8;	// ILEGAL
+	const GIFT = 9;	// PREMIO
+	const DEBT_PAYMENTS = 10;	// ABONO DE DEUDA
+	const SELL_OF_ARTICLES = 11;	// VENTA DE ARTICULOS
+	const LOANS = 12;	// PRESTAMOS
+	const TRANSFER_TO_ACCOUNTS_EARNINGS = 13;	// TRASPASO DE CUENTAS INGRESOS
 	// EXPENSES - GASTOS
-	const RENT = 12;	// RENTA
-	const MORTGAGE = 13;	// HIPOTECA
-	const SUBSCRIPTION_TO_SERVICES = 14; //SUSCRIPCIÓN A SERVICIOS
-	const FOOD_AWAY_FROM_HOME = 15;	// COMIDA FUERA DE CASA
-	const NON_VITAL_PURCHASE = 16;	// COMPRA NO VITAL
-	const VITAL_PURCHASE = 17;	// COMPRA VITAL
-	const CLOTHING_FOOTWEAR_BEAUTY_ETC = 18;	// ROPA, CALZADO, BELLEZA ETC
-	const ENTERTAINMENT = 19;	// ENTRETENIMIENTO
-	const DRUGS = 20;	// DROGAS
-	const BAD_LUCK = 21;	// MALA SUERTE
+	const RENT = 14;	// RENTA
+	const MORTGAGE = 15;	// HIPOTECA
+	const SUBSCRIPTION_TO_SERVICES = 16; //SUSCRIPCIÓN A SERVICIOS
+	const FOOD_AWAY_FROM_HOME = 17;	// COMIDA FUERA DE CASA
+	const NON_VITAL_PURCHASE = 18;	// COMPRA NO VITAL
+	const VITAL_PURCHASE = 19;	// COMPRA VITAL
+	const CLOTHING_FOOTWEAR_BEAUTY_ETC = 20;	// ROPA, CALZADO, BELLEZA ETC
+	const ENTERTAINMENT = 21;	// ENTRETENIMIENTO
+	const DRUGS = 22;	// DROGAS
+	const TRANSFER_TO_ACCOUNTS_EXPENSES = 23;	// TRASPASO DE CUENTAS INGRESOS
+	const DEBT = 24;	// ADEUDO
+	const WASHING_MACHINE = 25;	// LAVADORA
+	const NON_REMEMBER = 26;	// NO RECUERDO
+	const BAD_LUCK = 27;	// MALA SUERTE
 
 	public function type(): BelongsTo
 	{
@@ -54,5 +59,9 @@ class Catalog extends Model
 	public function scopeActivitiesForUser(Builder $query) {
 		$available_types = Type::TYPES_FOR_USERS;
 		$query->whereIntegerInRaw('type_id', $available_types)->orderBy('name');
+	}
+
+	public function scopePaymentMethods(Builder $query) {
+		$query->where('type_id', Type::FORMATS_PAYMENTS);
 	}
 }

@@ -45,6 +45,10 @@ class CatalogSeeder extends Seeder
 			'name' => 'Bienvenida',
 			'description' => 'Bienvenida a tu wallet y su tipo de división que debe elegir.',
 		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::SYSTEM,
+			'name' => 'Edición de la cuenta',
+		]);
 
 
 		// INGRESOS
@@ -88,6 +92,10 @@ class CatalogSeeder extends Seeder
 		DB::table('catalogs')->insert([
 			'type_id' => Type::EARNINGS,
 			'name' => 'Préstamo(s)',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::EARNINGS,
+			'name' => 'Traspaso a cuentas',
 		]);
 
 
@@ -134,8 +142,12 @@ class CatalogSeeder extends Seeder
 			'name' => 'Droga(s)',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::SYSTEM,
+			'type_id' => Type::EXPENSES,
 			'name' => 'Traspaso a cuentas',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::EXPENSES,
+			'name' => 'Adeudo',
 		]);
 
 
@@ -157,43 +169,78 @@ class CatalogSeeder extends Seeder
 		//TIPOS DE PAGO
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
-			'name' => 'Diario (1 Día)',
+			'name' => 'De contado (En el siguiente corte)',
+			'description' => '0',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Semanal (7 Días)',
+			'description' => '.25',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Quincenal (2 Semanas)',
+			'description' => '.5',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Mensual (4 Semanas)',
+			'description' => '1',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Bimestral (2 Meses)',
+			'description' => '2',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Trimestral (3 Meses)',
+			'description' => '3',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Cuatrimestral (4 Meses)',
+			'description' => '4',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Semestral (6 Meses)',
+			'description' => '6',
 		]);
 		DB::table('catalogs')->insert([
 			'type_id' => Type::FORMATS_PAYMENTS,
 			'name' => 'Anual (12 Meses)',
+			'description' => '12',
 		]);
 		DB::table('catalogs')->insert([
-			'type_id' => Type::SYSTEM,
-			'name' => 'Edición de la cuenta',
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => 'Quince Meses (15 Meses)',
+			'description' => '15',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => 'Dieciocho (18 Meses)',
+			'description' => '18',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => '2 años (24 Meses)',
+			'description' => '24',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => '3 años (36 Meses)',
+			'description' => '36',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => '4 años (48 Meses)',
+			'description' => '48',
+		]);
+		DB::table('catalogs')->insert([
+			'type_id' => Type::FORMATS_PAYMENTS,
+			'name' => '5 años (60 Meses)',
+			'description' => '60',
 		]);
 	}
 }

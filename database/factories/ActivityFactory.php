@@ -25,8 +25,10 @@ class ActivityFactory extends Factory
     {
         return [
 			'activitable_id' => Catalog::where('name', 'Bienvenida')->where('type_id', Type::SYSTEM)->first()->id,
+			'payment_method_id' => NULL,
             'activitable_type' => Type::SYSTEM,
 			'amount' => 0.0,
+			'last_amount' => 0.0,
             'description' => 'Bienvenido al Sistema de Control de Ingresos 😎',
             'activity_date' => now(),
             'account_money_id' => AccountMoney::all()->random()->id,

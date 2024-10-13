@@ -14,15 +14,18 @@ return new class extends Migration
 		Schema::create('activities', function (Blueprint $table) {
 			$table->id();
 			$table->foreignId('account_id');
+			$table->foreignId('payment_method_id')->nullable();
 			$table->morphs('activitable');
 			$table->text('description')->nullable();
 			$table->float('amount', 12, 0)->default(0);
+			$table->float('last_amount', 12, 0)->default(0);
 			$table->date('activity_date');
 			$table->foreignId('account_money_id');
 			$table->timestamps();
 			$table->softDeletes();
 
 			$table->foreign('account_id')->references('id')->on('accounts');
+			$table->foreign('payment_method_id')->references('id')->on('catalogs');
 		});
 	}
 

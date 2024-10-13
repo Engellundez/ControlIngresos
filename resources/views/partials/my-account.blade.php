@@ -34,7 +34,7 @@
 </section>
 
 <x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister">
-	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($type_activities), @js($activities), @js($my_accounts))">
+	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($expenses), @js($type_activities), @js($activities), @js($my_accounts), @js($payment_methods))" @keyup.enter="saveNewActivity">
 		<div>
 			<x-input-label for="account" :value="__('Account')" />
 			<x-select name="account" class="mt-1 block w-full" x-model="activity.account.data">
@@ -71,16 +71,30 @@
 		</div>
 		<div>
 			<x-input-label for="activity_amount" :value="__('Activity amount')" />
-			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity . amount . error ? 'is_invalid' : ''" class="mt-1 block w-full pl-4" autocomplete="off" :placeholder="__('amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
+			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" type="text" class="mt-1 block w-full" autocomplete="off" :placeholder="__('Amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
+
+		<div x-show="account_selected_is_credit" x-transition>
+			<x-input-label for="payment_method" :value="__('Payment method')" />
+
+			<x-select name="payment_method" class="mt-1 block w-full" x-bind:disabled="choose_type" x-model="activity.payment_method.data">
+				<option value="">{{ __('Select one option') }}</option>
+				<template x-for="payment_method in payment_methods">
+					<option :value="payment_method.id" x-text="payment_method.name"></option>
+				</template>
+			</x-select>
+
+			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.payment_method.error"></p>
+		</div>
+
 		<div>
-			<x-input-label for="activity_description" :value="__('Activity description') . ' ' . __('(Optional)')" />
-			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity . description . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" @keyup.enter="saveNewActivity" />
+			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
+			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" />
 		</div>
 		<div>
 			<x-input-label for="activity_date" :value="__('Activity date')" />
-			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity . date . error ? 'is_invalid' : ''" class="mt-1 block w-full" />
+			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity.date.error ? 'is_invalid' : ''" class="mt-1 block w-full" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.date.error"></p>
 		</div>
 		<center class="mt-10">
@@ -89,6 +103,7 @@
 		</center>
 	</div>
 </x-modal>
+
 @push('scripts')
 	<script>
 		function dates() {
@@ -120,39 +135,22 @@
 				type_activities: null,
 				activities: null,
 				accounts: null,
+				expenses_id: null,
+				payment_methods: null,
 				filter_activities: null,
-				activity: {
-					account: {
-						data: null,
-						error: null,
-					},
-					type_activity: {
-						data: null,
-						error: null,
-					},
-					activity: {
-						data: null,
-						error: null,
-					},
-					description: {
-						data: null,
-						error: null,
-					},
-					date: {
-						data: new Date().toLocaleString('sv-SE', DATE_OPTIONS).split(' ')[0],
-						error: null,
-					},
-					amount: {
-						data: null,
-						error: null,
-					},
-				},
-				setAndFilterActivies(type_activities, activities, accounts) {
+				account_selected_is_credit: false,
+				activity: null,
+				setAndFilterActivies(expenses, type_activities, activities, accounts, payment_methods) {
+					this.clearData();
+					this.expenses_id = expenses;
 					this.type_activities = type_activities;
 					this.activities = activities;
 					this.accounts = accounts;
+					this.payment_methods = payment_methods;
 
+					this.$watch('activity.account.data', () => this.checkIfCredit());
 					this.$watch('activity.type_activity.data', value => {
+						this.checkIfCredit()
 						this.activity.type_activity.data = value;
 						this.choose_type = value == '';
 						this.filter_activities = activities.filter(activity => activity.type_id === value);
@@ -164,11 +162,13 @@
 					this.activity.activity.error = this.activity.activity.data == '' || this.activity.activity.data == null ? 'La actividad es requerida.' : null;
 					this.activity.date.error = this.activity.date.data == '' || this.activity.date.data == null ? 'La fecha es requerida.' : null;
 					this.activity.amount.error = this.activity.amount.data == '' || this.activity.amount.data == null ? 'La cantidad es requerida.' : (this.activity.amount.data <= 0 ? 'La cantidad no puede ser menor a 1' : null);
+					this.activity.payment_method.error = this.account_selected_is_credit ? (this.activity.payment_method.data == null || this.activity.payment_method.data == null ? 'El metodo de pago es requerido' : null) : null;
 
 					return (this.activity.account.error == null &&
 						this.activity.type_activity.error == null &&
 						this.activity.activity.error == null &&
 						this.activity.date.error == null &&
+						this.activity.payment_method.error == null &&
 						this.activity.amount.error == null
 					);
 				},
@@ -191,6 +191,7 @@
 							data.append('account_money_id', this.activity.account.data);
 							data.append('type_activity_id', this.activity.type_activity.data);
 							data.append('activity_id', this.activity.activity.data);
+							data.append('payment_method', this.activity.payment_method.data);
 							data.append('description', this.activity.description.data);
 							data.append('date', this.activity.date.data);
 							data.append('amount', parseCurrency(this.activity.amount.data));
@@ -232,6 +233,10 @@
 							data: null,
 							error: null,
 						},
+						payment_method: {
+							data: null,
+							error: null,
+						},
 						description: {
 							data: null,
 							error: null,
@@ -244,6 +249,14 @@
 							data: null,
 							error: null,
 						},
+					}
+				},
+				checkIfCredit() {
+					const selectedAccount = this.accounts.find(account => account.id == this.activity.account.data);
+					if (selectedAccount && selectedAccount.is_credit == '1' && this.activity.type_activity.data != null && this.activity.type_activity.data == this.expenses_id) {
+						this.account_selected_is_credit = true;
+					} else {
+						this.account_selected_is_credit = false;
 					}
 				}
 			}

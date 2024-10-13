@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AccountMoneyController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\DebtsController;
 use App\Http\Controllers\PrincipalController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Activity;
+use App\Notifications\NextPayment;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,7 +47,10 @@ Route::middleware('auth')->name('profile.')->group(function () {
 	Route::delete('/profile', [ProfileController::class, 'destroy'])->name('destroy');
 });
 
-Route::get('test', function(){
+Route::middleware('auth')->name('debts.')->controller(DebtsController::class)->group(function () {
+	Route::get('my-debts', 'index')->name('index');
 });
+
+Route::get('test', function () {});
 
 require __DIR__ . '/auth.php';

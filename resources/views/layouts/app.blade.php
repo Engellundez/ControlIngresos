@@ -37,7 +37,27 @@
 			{{ $slot }}
 		</main>
 		<p
-			class="text-emerald-500 dark:text-emerald-400 text-red-400 dark:text-red-400 text-sky-300 dark:text-sky-300 text-blue-800 dark:text-blue-400 text-red-800 text-green-800 dark:text-green-400 text-yellow-800 dark:text-yellow-300 text-gray-800 dark:text-gray-300 border-blue-300 dark:border-blue-800 border-red-300 dark:border-red-800 border-green-300 dark:border-green-800 border-yellow-300 dark:border-yellow-800 border-gray-300 dark:border-gray-600 bg-blue-50 dark:bg-gray-800 bg-red-50 bg-green-50 bg-yellow-50 bg-gray-50">
+			class="
+			text-emerald-100 text-emerald-200 text-emerald-300 text-emerald-400 text-emerald-500 text-emerald-600 text-emerald-700 text-emerald-800 text-emerald-900
+			text-red-100 text-red-200 text-red-300 text-red-400 text-red-500 text-red-600 text-red-700 text-red-800 text-red-900
+			text-sky-300
+			text-blue-800 text-blue-400
+			text-green-800 text-green-400
+			text-yellow-800 text-yellow-300
+			text-gray-800 text-gray-300
+
+			border-blue-300 border-blue-800
+			border-red-300 border-red-800
+			border-green-300 border-green-800
+			border-yellow-300 border-yellow-800
+			border-gray-300 border-gray-600
+
+			bg-blue-50
+			bg-gray-800
+			bg-red-50 bg-red-100 bg-red-200 bg-red-300 bg-red-400 bg-red-500 bg-red-600 bg-red-700 bg-red-800 bg-red-900
+			bg-green-50
+			bg-yellow-100 bg-yellow-200 bg-yellow-300 bg-yellow-400 bg-yellow-500 bg-yellow-600 bg-yellow-700 bg-yellow-800 bg-yellow-900
+			bg-gray-50">
 		</p>
 
 	</div>

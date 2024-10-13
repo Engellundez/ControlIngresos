@@ -40,6 +40,11 @@ class Account extends Model
 		return $this->hasMany(Debtor::class, 'account_id', 'id');
 	}
 
+	public function debts(): HasMany
+	{
+		return $this->hasMany(Debt::class, 'account_id', 'id');
+	}
+
 	public function activities(): HasMany
 	{
 		return $this->hasMany(Activity::class, 'account_id', 'id');

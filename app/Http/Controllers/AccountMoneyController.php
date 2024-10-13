@@ -6,6 +6,8 @@ use App\Models\AccountMoney;
 use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\CreditCard;
+use App\Models\Debt;
+use App\Models\Debtor;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -49,6 +51,7 @@ class AccountMoneyController extends Controller
 	{
 		DB::beginTransaction();
 		try {
+			$principal_account_id = auth()->user()->userAccount->id;
 			if ($request->id == 'null') {
 				$account = new AccountMoney();
 				$message = "La cuenta se ha registrado correctamente";
@@ -59,7 +62,7 @@ class AccountMoneyController extends Controller
 				$message = "La cuenta se ha editado correctamente";
 				$description = "🛠👨🏼‍🏭✍🏼 Editando un poco 🛠👨🏼‍🏭✍🏼";
 			}
-			$account->account_id = auth()->user()->userAccount->id;
+			$account->account_id = $principal_account_id;
 			$account->name = strtoupper($request->name);
 			$account->amount = $request->amount;
 			$account->number = $this->strToBool($request->is_card) ? $request->number : null;
@@ -74,10 +77,35 @@ class AccountMoneyController extends Controller
 
 				$amount_credit = $request->credit_limit - $request->amount;
 				$amount_credit = $this->invertSign($amount_credit);
+				$credit_card_id = $account->creditCard->id;
+
+				if($amount_credit < 0){
+					$debts = new Debt();
+					$debts->account_id = $principal_account_id;
+					$debts->is_credit_card = true;
+					$debts->credit_card_id = $credit_card_id;
+					$debts->name = $account->name;
+					$debts->surname = substr($account->number, -4);
+					$debts->amount = $amount_credit;
+					$debts->amount_paid = 0;
+					$debts->months_to_paid = 0;
+					$debts->next_payment = $request->credit_deadline;
+
+					$debts->description = __('The credit card is automatically a debt');
+					$debts->save();
+				}else if ($amount_credit > 0){
+					$debts = new Debtor();
+					$debts->account_id = $principal_account_id;
+					$debts->name = $account->name;
+					$debts->surname = substr($account->number, -4);
+					$debts->amount = $amount_credit;
+					$debts->description = __('A card owes you money');
+					$debts->save();
+				}
 			}
 
 			$activity = new Activity();
-			$activity->account_id = auth()->user()->userAccount->id;
+			$activity->account_id = $principal_account_id;
 			$activity->account_money_id = $account->id;
 			$activity->activitable_id = $request->id == 'null' ? Catalog::WELCOME : Catalog::EDIT_ACCOUNT_MONEY;
 			$activity->activitable_type = Type::SYSTEM;
@@ -85,8 +113,10 @@ class AccountMoneyController extends Controller
 			$activity->activity_date = Carbon::now();
 			if ($this->strToBool($request->is_credit)) {
 				$activity->amount = $amount_credit;
+				$activity->last_amount = $amount_credit;
 			} else {
 				$activity->amount = $request->amount;
+				$activity->last_amount = $request->amount;
 			}
 			$activity->save();
 			$this->setNewGlobal();
@@ -107,6 +137,9 @@ class AccountMoneyController extends Controller
 			$account = AccountMoney::findOrFail($id_account);
 			foreach ($account->activities as $activity) {
 				$activity->delete();
+			}
+			if($this->strToBool($account->is_credit)){
+				$account->creditCard->delete();
 			}
 			$account->delete();
 			$this->setNewGlobal();

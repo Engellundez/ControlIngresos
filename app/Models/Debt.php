@@ -6,16 +6,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Debtor extends Model
+class Debt extends Model
 {
 	use SoftDeletes;
-	protected $table = 'debtors';
+
+	protected $table = 'debts';
 	protected $fillable = [
 		'account_id',
+		'is_credit_card',
+		'credit_card_id',
 		'name',
 		'surname',
 		'second_surname',
 		'amount',
+		'amount_paid',
+		'months_to_paid',
+		'next_payment',
 		'description'
 	];
 
