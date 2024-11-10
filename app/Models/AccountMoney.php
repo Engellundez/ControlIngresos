@@ -44,7 +44,7 @@ class AccountMoney extends Model
 	// SCOPES
 	public function scopeAccountsOfMoney(Builder $query, $id_account)
 	{
-		$query->where([['account_id', '=', $id_account], ['is_active', '=', true]]);
+		return $query->where([['account_id', '=', $id_account], ['is_active', '=', true]]);
 	}
 
 	// ATTRIBUTES

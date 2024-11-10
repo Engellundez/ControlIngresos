@@ -15,14 +15,14 @@
 			</div>
 
 			<!-- Contenido de las columnas -->
-			<div class="grid grid-cols-5 gap-6">
+			<div class="grid grid-cols-1 md:grid-cols-5">
 				<!-- Primera columna: ocupa 2/5 del espacio -->
-				<div class="col-span-2 p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+				<div class="col-span-2 p-4 sm:p-8 md:mr-2 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
 					@include('partials.last-movements')
 				</div>
 
 				<!-- Segunda columna: ocupa 3/5 del espacio -->
-				<div class="col-span-3 p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+				<div class="col-span-3 p-4 sm:p-8 mt-5 md:mt-0 md:ml-2 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
 					@include('partials.grafic')
 				</div>
 			</div>

@@ -23,7 +23,7 @@ class AccountMoneyController extends Controller
 
 	public function my_accounts()
 	{
-		$accounts = AccountMoney::where('account_id', auth()->user()->userAccount->id)->get();
+		$accounts = AccountMoney::where('account_id', auth()->user()->userAccount->id)->with(['creditCard'])->get();
 		$accounts->map(function ($item, $key) {
 			$item->id_crypt = Crypt::encrypt($item->id);
 			$item->account_id = Crypt::encrypt($item->account_id);
@@ -86,7 +86,7 @@ class AccountMoneyController extends Controller
 					$debts->credit_card_id = $credit_card_id;
 					$debts->name = $account->name;
 					$debts->surname = substr($account->number, -4);
-					$debts->amount = $amount_credit;
+					$debts->amount = $this->invertSign($amount_credit);
 					$debts->amount_paid = 0;
 					$debts->months_to_paid = 0;
 					$debts->next_payment = $request->credit_deadline;

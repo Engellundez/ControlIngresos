@@ -54,7 +54,16 @@
 									</td>
 									<td class="px-4 py-2">
 										<center>
-											<p class="dark:text-white" x-text="formatCurrency(account.amount)"></p>
+											<template x-if="account.is_credit == 1">
+												<div>
+													<p class="text-red-800" x-text="getCreditDebt(account)" x-show="getCreditDebt(account) != '$0.00'"></p>
+
+													<p class="dark:text-white" x-text="formatCurrency(account.amount)"></p>
+												</div>
+											</template>
+											<template x-if="account.is_credit == 0">
+												<p class="dark:text-white" x-text="formatCurrency(account.amount)"></p>
+											</template>
 										</center>
 									</td>
 									<td class="px-4 py-2">
@@ -245,6 +254,10 @@
 							})
 						}
 					});
+				},
+				getCreditDebt(account) {
+					let amount = account.credit_card.limit_credit - account.amount;
+					return formatCurrency(amount);
 				}
 			}
 		}

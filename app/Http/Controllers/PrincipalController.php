@@ -7,6 +7,7 @@ use App\Models\AccountMoney;
 use App\Models\Activity;
 use App\Models\Catalog;
 use App\Models\Debt;
+use App\Models\Debtor;
 use App\Models\Type;
 use App\Notifications\NextPayment;
 use Carbon\Carbon;
@@ -21,16 +22,19 @@ class PrincipalController extends Controller
 
 	public function dashboard()
 	{
-		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears'];
-		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300'];
-		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => ''];
+		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears', Type::LOSSES => 'fa-heart-crack'];
+		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300', Type::LOSSES => 'text-red-400 dark:text-red-400'];
+		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => '', Type::LOSSES => '-'];
 		$expenses = Type::EXPENSES;
 		$accountsIcons = ['fa-sack-dollar', 'fa-credit-card', 'fa-money-check-dollar'];
 		$payment_methods = Catalog::PaymentMethods()->get();
 		$type_activities = Type::TypesForUsers()->get();
 		$activities = Catalog::ActivitiesForUser()->get();
-		$my_accounts = AccountMoney::AccountsOfMoney(Account::GetIdAccountInSession())->get();
-		return view('dashboard', compact('payment_methods', 'type_activities', 'activities', 'my_accounts', 'icons', 'colors', 'symbols', 'accountsIcons', 'expenses'));
+		$id_account = Account::GetIdAccountInSession();
+		$my_accounts = AccountMoney::AccountsOfMoney($id_account)->get();
+		$my_accounts_debts = Debt::MyDebts($id_account)->get();
+		$my_debtors = Debtor::MyDebtors($id_account)->get();
+		return view('dashboard', compact('payment_methods', 'type_activities', 'activities', 'my_accounts', 'icons', 'colors', 'symbols', 'accountsIcons', 'expenses', 'my_accounts_debts', 'my_debtors'));
 	}
 
 	public function last_movements(Request $request)
@@ -204,6 +208,8 @@ class PrincipalController extends Controller
 				$debts->save();
 			}
 
+			// $this->check_debts_and_debtors($activity, $request->account_to_credited, $request->debtor_account);
+
 			$this->setNewGlobal();
 			DB::commit();
 
@@ -212,6 +218,41 @@ class PrincipalController extends Controller
 			DB::rollBack();
 			throw $th;
 			return response()->JSON(["response_type" => "alert", "response" => ["type" => "error", "message" => "La actividad no se pudo guardar, ERROR:" . PHP_EOL . PHP_EOL . $th->getMessage()]]);
+		}
+	}
+
+	public function check_debts_and_debtors(Activity $activity, $account_to_credited, $debtor_account)
+	{
+		// ACTUALIZAR LAS CUENTAS DE QUIEN ME DEBE Y DONDE DEBO RESPECTO MIS ACTIVIDADES Y CUENTAS
+		if ($activity->activity_id == Catalog::DEBT) {
+			$account_id = $account_to_credited;
+
+			$debt = Debt::find($account_to_credited);
+			$new_amount = $debt->amount - $activity->amount;
+			if ($new_amount <= 0) {
+				$debt->delete();
+			} else {
+				$debt->amount = $new_amount;
+				$debt->months_to_paid = (int) $debt->months_to_paid - 1;
+				$debt->next_payment = Carbon::parse($debt->next_payment)->addMonth();
+				$debt->save();
+			}
+		}
+
+		if ($activity->activity_id == Catalog::DEBT_PAYMENTS) {
+			$account_id = $debtor_account;
+
+			$debtor = Debtor::find($debtor_account);
+			$new_amount = $debtor->amount - $activity->amount;
+			if ($new_amount <= 0) {
+				$debtor->delete();
+			} else {
+				$debtor->amount = $new_amount;
+				$debtor->save();
+			}
+			$create_activity = true;
+			$type = Type::EXPENSES;
+			$activity = Catalog::DEBT;
 		}
 	}
 

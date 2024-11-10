@@ -34,7 +34,7 @@
 </section>
 
 <x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister">
-	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($expenses), @js($type_activities), @js($activities), @js($my_accounts), @js($payment_methods))" @keyup.enter="saveNewActivity">
+	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($expenses), @js($type_activities), @js($activities), @js($my_accounts), @js($payment_methods), @js($my_accounts_debts), @js($my_debtors))" @keyup.enter="saveNewActivity">
 		<div>
 			<x-input-label for="account" :value="__('Account')" />
 			<x-select name="account" class="mt-1 block w-full" x-model="activity.account.data">
@@ -71,30 +71,56 @@
 		</div>
 		<div>
 			<x-input-label for="activity_amount" :value="__('Activity amount')" />
-			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity.amount.error ? 'is_invalid' : ''" type="text" class="mt-1 block w-full" autocomplete="off" :placeholder="__('Amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
+			<x-text-input name="activity_amount" x-model="activity.amount.data" :class="activity . amount . error ? 'is_invalid' : ''" type="text" class="mt-1 block w-full" autocomplete="off" :placeholder="__('Amount of activity')" x-mask:dynamic="$money($input)" @focus="$event.target.select()" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.amount.error"></p>
 		</div>
 
-		<div x-show="account_selected_is_credit" x-transition>
-			<x-input-label for="payment_method" :value="__('Payment method')" />
+		<template x-if="account_selected_is_credit" x-transition>
+			<div>
+				<x-input-label for="payment_method" :value="__('Payment method')" />
 
-			<x-select name="payment_method" class="mt-1 block w-full" x-bind:disabled="choose_type" x-model="activity.payment_method.data">
-				<option value="">{{ __('Select one option') }}</option>
-				<template x-for="payment_method in payment_methods">
-					<option :value="payment_method.id" x-text="payment_method.name"></option>
-				</template>
-			</x-select>
+				<x-select name="payment_method" class="mt-1 block w-full" x-bind:disabled="choose_type" x-model="activity.payment_method.data">
+					<option value="">{{ __('Select one option') }}</option>
+					<template x-for="payment_method in payment_methods">
+						<option :value="payment_method.id" x-text="payment_method.name"></option>
+					</template>
+				</x-select>
 
-			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.payment_method.error"></p>
-		</div>
+				<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.payment_method.error"></p>
+			</div>
+		</template>
+
+		<template x-if="activity.activity.data == DEBT">
+			<div>
+				<x-input-label for="account" :value="__('Account to be credited')" />
+				<x-select name="account" class="mt-1 block w-full" x-model="activity.account_to_credited.data">
+					<option value="">{{ __('Select one option') }}</option>
+					<template x-for="account in accountsDebts">
+						<option :value="account.id" x-text="formatAccountDebt(account)"></option>
+					</template>
+				</x-select>
+			</div>
+		</template>
+
+		<template x-if="activity.activity.data == DEBT_PAYMENTS">
+			<div>
+				<x-input-label for="account" :value="__('Pay into account')" />
+				<x-select name="account" class="mt-1 block w-full" x-model="activity.debtor_account.data">
+					<option value="">{{ __('Select one option') }}</option>
+					<template x-for="account in debtors">
+						<option :value="account.id" x-text="`${account.name} ${account.surname == 'null' ? account.surname : ''} ${account.second_surname == 'null' ? account.second_surname : ''} > ${formatCurrency(account.amount)}`"></option>
+					</template>
+				</x-select>
+			</div>
+		</template>
 
 		<div>
-			<x-input-label for="activity_description" :value="__('Activity description').' '.__('(Optional)')" />
-			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity.description.error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" />
+			<x-input-label for="activity_description" :value="__('Activity description') . ' ' . __('(Optional)')" />
+			<x-text-input name="activity_description" x-model="activity.description.data" type="text" :class="activity . description . error ? 'is_invalid' : ''" class="mt-1 block w-full" :placeholder="__('Description of activity')" autocomplete="off" />
 		</div>
 		<div>
 			<x-input-label for="activity_date" :value="__('Activity date')" />
-			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity.date.error ? 'is_invalid' : ''" class="mt-1 block w-full" />
+			<x-text-input name="activity_date" x-model="activity.date.data" type="date" :class="activity . date . error ? 'is_invalid' : ''" class="mt-1 block w-full" />
 			<p class="text-sm text-red-600 dark:text-red-400 space-y-1 mt-2" x-text="activity.date.error"></p>
 		</div>
 		<center class="mt-10">
@@ -131,28 +157,36 @@
 
 		function RegisterActivity() {
 			return {
+				DEBT: "{{ \App\Models\Catalog::DEBT }}",
+				DEBT_PAYMENTS: "{{ \App\Models\Catalog::DEBT_PAYMENTS }}",
+				NEXT_PAYMENT: "{{__('next payment')}}",
+				MONTHS: "{{ __('Months') }}",
 				choose_type: true,
 				type_activities: null,
 				activities: null,
 				accounts: null,
+				accountsDebts: null,
+				debtors: null,
 				expenses_id: null,
 				payment_methods: null,
 				filter_activities: null,
 				account_selected_is_credit: false,
 				activity: null,
-				setAndFilterActivies(expenses, type_activities, activities, accounts, payment_methods) {
+				setAndFilterActivies(expenses, type_activities, activities, accounts, payment_methods, accountsDebts = null, debtors = null) {
 					this.clearData();
 					this.expenses_id = expenses;
 					this.type_activities = type_activities;
 					this.activities = activities;
 					this.accounts = accounts;
+					this.accountsDebts = accountsDebts;
+					this.debtors = debtors;
 					this.payment_methods = payment_methods;
 
 					this.$watch('activity.account.data', () => this.checkIfCredit());
 					this.$watch('activity.type_activity.data', value => {
-						this.checkIfCredit()
+						this.checkIfCredit();
 						this.activity.type_activity.data = value;
-						this.choose_type = value == '';
+						this.choose_type = value === '';
 						this.filter_activities = activities.filter(activity => activity.type_id === value);
 					});
 				},
@@ -195,6 +229,8 @@
 							data.append('description', this.activity.description.data);
 							data.append('date', this.activity.date.data);
 							data.append('amount', parseCurrency(this.activity.amount.data));
+							data.append('account_to_credited', parseCurrency(this.activity.account_to_credited.data));
+							data.append('debtor_account', parseCurrency(this.activity.debtor_account.data));
 
 							fetch(url, {
 									method: "POST",
@@ -237,6 +273,14 @@
 							data: null,
 							error: null,
 						},
+						account_to_credited: {
+							data: null,
+							error: null,
+						},
+						debtor_account: {
+							data: null,
+							error: null,
+						},
 						description: {
 							data: null,
 							error: null,
@@ -258,6 +302,15 @@
 					} else {
 						this.account_selected_is_credit = false;
 					}
+				},
+				formatAccountDebt(account) {
+					let name = account.name;
+					let surname = account.surname == 'null' ? account.surname : '';
+					let second_surname = account.second_surname == 'null' ? account.second_surname : '';
+					let amount = formatCurrency(account.amount);
+					let months_to_paid = this.NEXT_PAYMENT;
+					if (account.months_to_paid != 0) months_to_paid = `> ${account.months_to_paid} ${this.MONTHS}`;
+					return `${name} ${surname} ${second_surname} > ${amount} ${months_to_paid}`;
 				}
 			}
 		}

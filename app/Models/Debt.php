@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,6 +30,10 @@ class Debt extends Model
 	public function userAccount(): BelongsTo
 	{
 		return $this->belongsTo(Account::class, 'id', 'account_id');
+	}
+
+	public function scopeMyDebts(Builder $query, $id_account) {
+		return $query->where([['account_id', '=', $id_account]]);
 	}
 
 	// ATTRIBUTES

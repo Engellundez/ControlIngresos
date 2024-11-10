@@ -57,7 +57,7 @@
 			bg-red-50 bg-red-100 bg-red-200 bg-red-300 bg-red-400 bg-red-500 bg-red-600 bg-red-700 bg-red-800 bg-red-900
 			bg-green-50
 			bg-yellow-100 bg-yellow-200 bg-yellow-300 bg-yellow-400 bg-yellow-500 bg-yellow-600 bg-yellow-700 bg-yellow-800 bg-yellow-900
-			bg-gray-50">
+			bg-gray-50 grid-cols-5">
 		</p>
 
 	</div>
