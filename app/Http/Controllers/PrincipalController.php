@@ -258,9 +258,9 @@ class PrincipalController extends Controller
 
 	public function my_last_movements()
 	{
-		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears'];
-		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300'];
-		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => ''];
+		$icons = [Type::EARNINGS => 'fa-circle-up', Type::EXPENSES => 'fa-circle-down', Type::SYSTEM => 'fa-gears', Type::LOSSES => 'fa-heart-crack'];
+		$colors = [Type::EARNINGS => 'text-emerald-500 dark:text-emerald-400', Type::EXPENSES => 'text-red-400 dark:text-red-400', Type::SYSTEM => 'text-sky-300 dark:text-sky-300', Type::LOSSES => 'text-red-400 dark:text-red-400'];
+		$symbols = [Type::EARNINGS => '+', Type::EXPENSES => '-', Type::SYSTEM => '', Type::LOSSES => '-'];
 		$accountsIcons = ['fa-sack-dollar', 'fa-credit-card', 'fa-money-check-dollar'];
 
 		return view('my_last_movements', compact('icons', 'colors', 'symbols', 'accountsIcons'));

@@ -42,8 +42,8 @@
 
 .column-image {
 	@apply relative flex-shrink-0;
-	width: 3rem;  /* Asegura un ancho suficiente */
-	height: 3rem; /* Asegura un alto suficiente */
+	width: 3rem;
+	height: 3rem;
 }
 
 .column-image img {
@@ -56,8 +56,8 @@
 
 i.secondary-image {
 	@apply text-xl;
-	top: -9px;  /* Ajusta para que sobresalga por encima */
-	right: 2px;  /* Ajusta para que sobresalga a la derecha */
+	top: -9px;
+	right: 2px;
 }
 
 .fa-solid {
@@ -99,16 +99,48 @@ i.secondary-image {
 .swal2-modal {
 	background-color: #1f2937;
 }
-.swal2-title{
+.swal2-title {
 	color: #fff;
 	font-weight: bold;
 }
-.swal2-html-container{
+.swal2-html-container {
 	color: #fff !important;
 }
-button.swal2-confirm{
+button.swal2-confirm {
 	@apply inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150;
 }
-button.swal2-cancel{
+button.swal2-cancel {
 	@apply inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150;
+}
+
+.colored-toast.swal2-icon-success {
+    background-color: #4caf50 !important;
+}
+
+.colored-toast.swal2-icon-error {
+    background-color: #e57373 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+    background-color: #ffb74d !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background-color: #29b6f6 !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background-color: #78909c !important;
+}
+
+.colored-toast .swal2-title {
+	color: #1f2937;
+}
+
+.colored-toast .swal2-close {
+	color: #1f2937;
+}
+
+.colored-toast .swal2-html-container {
+	color: #1f2937;
 }

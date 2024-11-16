@@ -24,8 +24,8 @@
 			<div class="p-4 sm:p-8 bg-white dark:bg-gray-800 sm:rounded-lg flex items-center">
 				<x-secondary-button class="mt-5"
 					@click="$dispatch('update-data');
-        			rotate = true;
-        			setTimeout(() => rotate = false, 2000);">
+					rotate = true;
+					setTimeout(() => rotate = false, 2000);">
 					<i class="fa-solid fa-arrows-rotate" :class="rotate ? 'fa-spin' : ''"></i>&nbsp;&nbsp;{{ __('Update Info') }}
 				</x-secondary-button>
 			</div>
@@ -34,10 +34,10 @@
 </section>
 
 <x-modal name="NewRegister" class="mx-auto max-w-lg" id="NewRegister">
-	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($expenses), @js($type_activities), @js($activities), @js($my_accounts), @js($payment_methods), @js($my_accounts_debts), @js($my_debtors))" @keyup.enter="saveNewActivity">
+	<div x-data="RegisterActivity()" x-init="setAndFilterActivies(@js($expenses), @js($type_activities), @js($activities), @js($my_accounts), @js($payment_methods), @js($my_accounts_debts), @js($my_debtors));" @keyup.enter="saveNewActivity" @open-modal.window="if($event.detail === 'NewRegister') setTimeout(() => {$refs.firstSelect.focus();}, 100);">
 		<div>
 			<x-input-label for="account" :value="__('Account')" />
-			<x-select name="account" class="mt-1 block w-full" x-model="activity.account.data">
+			<x-select name="account" class="mt-1 block w-full" x-model="activity.account.data" x-ref="firstSelect">
 				<option value="">{{ __('Select one option') }}</option>
 				<template x-for="account in accounts">
 					<option :value="account.id" x-text="account.name + (account.is_card == 1 ? ' ' + account.number.slice(-4) : '')"></option>
@@ -159,7 +159,7 @@
 			return {
 				DEBT: "{{ \App\Models\Catalog::DEBT }}",
 				DEBT_PAYMENTS: "{{ \App\Models\Catalog::DEBT_PAYMENTS }}",
-				NEXT_PAYMENT: "{{__('next payment')}}",
+				NEXT_PAYMENT: "{{ __('next payment') }}",
 				MONTHS: "{{ __('Months') }}",
 				choose_type: true,
 				type_activities: null,
@@ -314,5 +314,9 @@
 				}
 			}
 		}
+
+		document.addEventListener('keyup', (e) => {
+			if (e.code === 'NumpadAdd' || e.code === 'BracketRight') {window.dispatchEvent(new CustomEvent('open-modal', {detail: 'NewRegister'}));}
+		});
 	</script>
 @endpush

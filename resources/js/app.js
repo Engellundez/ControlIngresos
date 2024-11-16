@@ -3,7 +3,7 @@ import Alpine from "alpinejs";
 import mask from "@alpinejs/mask";
 import { driver } from "driver.js";
 import Chart from "chart.js/auto";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 // Configuración de opciones para obtener el formato deseado en la zona horaria -0600
 const DATE_OPTIONS = {
@@ -13,19 +13,32 @@ const DATE_OPTIONS = {
 	timeZone: "America/Mexico_City", // Ejemplo para zona horaria -0600
 };
 
+const Toast = Swal.mixin({
+	toast: true,
+	position: "top-end",
+	iconColor: '#1f2937',
+	customClass: {
+		popup: "colored-toast",
+	},
+	showConfirmButton: false,
+	timerProgressBar: true,
+});
+
 function processJsonResponse(response) {
 	if (response.response_type === "alert") {
-		alertToast(response);
-	}else{
-		console.error(
-			`El response_type: "${response.response_type}", no ha sido reconocido, verificar`
-		);
+		alertToast(response.response);
+	} else {
+		console.error(`El response_type: "${response.response_type}", no ha sido reconocido, verificar`);
 	}
 	return null;
 }
 
-function alertToast(alertStructure) {
-	console.log("🚀 ~ alertToast ~ alertStructure:", alertStructure);
+function alertToast(data) {
+	Toast.fire({
+		icon: data?.type ?? "question",
+		title: data?.message ?? "",
+		timer: data?.timer ?? 2000,
+	});
 }
 
 function formatCurrency(number) {
@@ -50,11 +63,11 @@ function formatCreditCard(number, maskPattern = "XXXX XXXX XXXX XXXX") {
 }
 
 function parseCurrency(currencyStr) {
-    // Elimina el símbolo de moneda y las comas
-    let numericStr = String(currencyStr).replace(/[,$]/g, '');
+	// Elimina el símbolo de moneda y las comas
+	let numericStr = String(currencyStr).replace(/[,$]/g, "");
 
-    // Convierte la cadena restante a número flotante
-    return parseFloat(numericStr);
+	// Convierte la cadena restante a número flotante
+	return parseFloat(numericStr);
 }
 
 Alpine.plugin(mask);
